@@ -17,6 +17,10 @@ int ManhattanDistance::Calculate(const std::vector<int>& state) const {
     for (size_t i = 0; i < stateSize; i++) {
         int value = state[i];
 
+        if (value == 0) {
+            continue;
+        }
+
         int currentRow = i / 3;
         int currentCol = i % 3;
 
