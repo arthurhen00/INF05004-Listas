@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -I. # -Wextra
-OBJS = main.o ManhattanDistance.o
+OBJS = main.o ManhattanDistance.o BFS.o
 
 main: $(OBJS)
 	$(CC) -o main $(OBJS)
@@ -9,11 +9,11 @@ main: $(OBJS)
 main.o: main.cpp
 	$(CC) -c main.cpp $(CFLAGS)
 
-ManhattanDistance.o: ManhattanDistance.cpp
-	$(CC) -c ManhattanDistance.cpp $(CFLAGS)
+ManhattanDistance.o: Heuristics/ManhattanDistance.cpp
+	$(CC) -c Heuristics/ManhattanDistance.cpp $(CFLAGS)
 
-BFS8Puzzle.o: BFS8Puzzle.cpp
-	$(CC) -c BFS8Puzzle.cpp $(CFLAGS)
+BFS.o: SearchAlg/BFS.cpp
+	$(CC) -c SearchAlg/BFS.cpp $(CFLAGS)
 
 clean:
 	rm main *.o
