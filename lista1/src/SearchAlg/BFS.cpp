@@ -54,12 +54,6 @@ void BFS::Resolve() {
             // s' not in closed
             if (closed.find(std::string(neighbor.data, 9)) == closed.end()) {
                 closed.insert(std::string(neighbor.data, 9));
-
-                std::vector<int> neigborState;
-                for (size_t i = 0; i < 9; i++) {
-                    neigborState.push_back(neighbor.data[i]);
-                }
-
                 open.push_back(neighbor);
             }
         }
