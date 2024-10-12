@@ -1,19 +1,24 @@
 CC = g++
 CFLAGS = -Wall -I. # -Wextra
-OBJS = main.o ManhattanDistance.o
+OBJS = main.o ManhattanDistance.o'
 
-main: $(OBJS)
-	$(CC) -o main $(OBJS)
-	rm *.o
+SRCDIR = src
+OBJDIR = obj
 
-main.o: main.cpp
-	$(CC) -c main.cpp $(CFLAGS)
+OBJECTS = $(addprefix $(OBJDIR)/, main.o ManhattanDistance.o BFS8Puzzle.o)
 
-ManhattanDistance.o: ManhattanDistance.cpp
-	$(CC) -c ManhattanDistance.cpp $(CFLAGS)
+main: $(OBJECTS)
+	$(CC) $(OBJECTS) -o main $(CFLAGS)
 
-BFS8Puzzle.o: BFS8Puzzle.cpp
-	$(CC) -c BFS8Puzzle.cpp $(CFLAGS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+	$(CC) -c $< $(CFLAGS) -o $@
+
+$(OBJDIR):	
+	mkdir $(OBJDIR)
 
 clean:
-	rm main *.o
+ifeq ($(OS),Windows_NT)
+	-del /Q $(OBJDIR) $(BINDIR)
+else
+	-rm -rf $(OBJDIR) $(BINDIR)
+endif
