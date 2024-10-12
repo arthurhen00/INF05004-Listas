@@ -9,11 +9,11 @@ main: $(OBJS)
 main.o: main.cpp
 	$(CC) -c main.cpp $(CFLAGS)
 
-ManhattanDistance.o: Heuristics/ManhattanDistance.cpp
-	$(CC) -c Heuristics/ManhattanDistance.cpp $(CFLAGS)
+ManhattanDistance.o: src/Heuristics/ManhattanDistance.cpp
+	$(CC) -c src/Heuristics/ManhattanDistance.cpp $(CFLAGS)
 
-BFS.o: SearchAlg/BFS.cpp
-	$(CC) -c SearchAlg/BFS.cpp $(CFLAGS)
+BFS.o: src/SearchAlg/BFS.cpp
+	$(CC) -c src/SearchAlg/BFS.cpp $(CFLAGS)
 
 clean:
 	rm main *.o

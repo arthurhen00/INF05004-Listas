@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Puzzles/Puzzle.hpp"
+#include "src/Puzzles/Puzzle.hpp"
 
 class EightPuzzle : public Puzzle {
     public:

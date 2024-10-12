@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 
-#include "Heuristics/ManhattanDistance.hpp"
-#include "Puzzles/EightPuzzle.hpp"
-#include "SearchAlg/BFS.hpp"
+#include "src/Heuristics/ManhattanDistance.hpp"
+#include "src/Puzzles/EightPuzzle.hpp"
+#include "src/SearchAlg/BFS.hpp"
 
 int main() {
     printf("Hello, World!\n");

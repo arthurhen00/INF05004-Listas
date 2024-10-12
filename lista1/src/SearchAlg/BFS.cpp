@@ -1,6 +1,6 @@
-#include "Puzzles/Puzzle.hpp"
-#include "Heuristics/Heuristic.hpp"
-#include "SearchAlg/BFS.hpp"
+#include "src/Puzzles/Puzzle.hpp"
+#include "src/Heuristics/Heuristic.hpp"
+#include "src/SearchAlg/BFS.hpp"
 
 #include <deque>
 #include <unordered_set>

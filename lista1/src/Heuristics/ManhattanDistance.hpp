@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Heuristics/Heuristic.hpp"
+#include "src/Heuristics/Heuristic.hpp"
 
 class ManhattanDistance : public Heuristic {
     public: 

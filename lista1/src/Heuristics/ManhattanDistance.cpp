@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "Heuristics/ManhattanDistance.hpp"
+#include "src/Heuristics/ManhattanDistance.hpp"
 
 int ManhattanDistance::Calculate() const {
     const std::vector<int>& state = puzzle.getState();
