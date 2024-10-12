@@ -1,14 +1,13 @@
 #pragma once
 
-#include "src/Heuristics/Heuristic.hpp"
-
 #include <vector>
 
 class BFS {
     public:
-        BFS(const Heuristic& heuristic) : heuristic(heuristic) {}
+        BFS(std::vector<int> state) : startState(state) {}
         void Resolve();
 
-        const Heuristic& heuristic;
+        std::vector<int> startState;
     private:
+        std::vector<int> getGoal() { return {0, 1, 2, 3, 4, 5, 6, 7, 8}; };
 };
