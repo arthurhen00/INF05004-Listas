@@ -2,12 +2,10 @@ CC = g++
 CFLAGS = -Wall -I. # -Wextra
 OBJS = main.o ManhattanDistance.o BFS.o
 
-main: $(OBJS)
-	$(CC) -o main $(OBJS)
-	rm *.o
+OBJECTS = $(addprefix $(OBJDIR)/, main.o ManhattanDistance.o BFS8Puzzle.o)
 
-main.o: main.cpp
-	$(CC) -c main.cpp $(CFLAGS)
+main: $(OBJECTS)
+	$(CC) $(OBJECTS) -o main $(CFLAGS)
 
 ManhattanDistance.o: Heuristics/ManhattanDistance.cpp
 	$(CC) -c Heuristics/ManhattanDistance.cpp $(CFLAGS)
@@ -16,4 +14,8 @@ BFS.o: SearchAlg/BFS.cpp
 	$(CC) -c SearchAlg/BFS.cpp $(CFLAGS)
 
 clean:
-	rm main *.o
+ifeq ($(OS),Windows_NT)
+	-del /Q $(OBJDIR) $(BINDIR)
+else
+	-rm -rf $(OBJDIR) $(BINDIR)
+endif
