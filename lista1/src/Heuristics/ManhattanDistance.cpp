@@ -4,7 +4,7 @@
 #include "src/Heuristics/ManhattanDistance.hpp"
 
 int ManhattanDistance::Calculate() const {
-    const std::vector<int>& state = puzzle.getState();
+    const std::vector<int>& state = puzzle.getStartState();
     const std::vector<int> goal = puzzle.getGoalState();
     int gridSize = puzzle.getGridSize();
     size_t stateSize = state.size();
