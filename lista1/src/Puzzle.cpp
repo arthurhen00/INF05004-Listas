@@ -46,48 +46,64 @@ int Puzzle::findBlank() const {
     throw std::runtime_error("Blank space not found in the Puzzle.");
 }
 
-Puzzle Puzzle::moveDown() const {
+void Puzzle::moveDown() {
     int blankIndex = findBlank();
-    std::string newcurrentState = currentState;
-    if(blankIndex <= 5){
-        std::swap(newcurrentState[blankIndex], newcurrentState[blankIndex + 3]);
+    if (blankIndex <= 5) {
+        std::swap(currentState[blankIndex], currentState[blankIndex + 3]);
+        lastAction = DOWN;
+        ++solutionLength;
     }
-    return Puzzle(newcurrentState, size, solutionLength + 1, DOWN);
 }
 
-Puzzle Puzzle::moveUp() const {
+void Puzzle::moveUp() {
     int blankIndex = findBlank();
-    std::string newcurrentState = currentState;
-    if(blankIndex > 2){
-        std::swap(newcurrentState[blankIndex], newcurrentState[blankIndex - 3]);
+    if (blankIndex > 2) {
+        std::swap(currentState[blankIndex], currentState[blankIndex - 3]);
+        lastAction = UP;
+        ++solutionLength;
     }
-    return Puzzle(newcurrentState, size, solutionLength + 1, UP);
 }
 
-Puzzle Puzzle::moveRight() const {
+void Puzzle::moveRight() {
     int blankIndex = findBlank();
-    std::string newcurrentState = currentState;
-    if(blankIndex % 3 != 2){
-        std::swap(newcurrentState[blankIndex], newcurrentState[blankIndex + 1]);
+    if (blankIndex % 3 != 2) {
+        std::swap(currentState[blankIndex], currentState[blankIndex + 1]);
+        lastAction = RIGHT;
+        ++solutionLength;
     }
-    return Puzzle(newcurrentState, size, solutionLength + 1, RIGHT);
 }
 
-Puzzle Puzzle::moveLeft() const {
+void Puzzle::moveLeft() {
     int blankIndex = findBlank();
-    std::string newcurrentState = currentState;
-    if(blankIndex % 3 != 0){
-        std::swap(newcurrentState[blankIndex], newcurrentState[blankIndex - 1]);
+    if (blankIndex % 3 != 0) {
+        std::swap(currentState[blankIndex], currentState[blankIndex - 1]);
+        lastAction = LEFT;
+        ++solutionLength;
     }
-    return Puzzle(newcurrentState, size, solutionLength + 1, LEFT);
 }
 
 std::vector<Puzzle> Puzzle::getNeighbors() const {
     std::vector<Puzzle> neighbors;
-    if (lastAction != DOWN) neighbors.push_back(moveUp());
-    if (lastAction != RIGHT) neighbors.push_back(moveLeft());
-    if (lastAction != LEFT) neighbors.push_back(moveRight());
-    if (lastAction != UP) neighbors.push_back(moveDown());
+    if (lastAction != DOWN) {
+        Puzzle up(*this);
+        up.moveUp();
+        neighbors.push_back(std::move(up));
+    }
+    if (lastAction != RIGHT) {
+        Puzzle left(*this);
+        left.moveLeft();
+        neighbors.push_back(std::move(left));
+    }
+    if (lastAction != LEFT) {
+        Puzzle right(*this);
+        right.moveRight();
+        neighbors.push_back(std::move(right));
+    }
+    if (lastAction != UP) {
+        Puzzle down(*this);
+        down.moveDown();
+        neighbors.push_back(std::move(down));
+    }
     return neighbors;
 }
 

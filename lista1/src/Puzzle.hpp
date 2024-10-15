@@ -25,14 +25,14 @@ class Puzzle {
         int lastAction;
     
         friend std::ostream& operator<<(std::ostream& os, const Puzzle& obj);
-        
+
     private:
         
         Puzzle(std::string startingState, unsigned int puzzleSize, int length, int action);
         Puzzle(const char startingState[], unsigned int puzzleSize, int length, int action);
-        Puzzle moveDown() const;
-        Puzzle moveUp() const;
-        Puzzle moveRight() const;
-        Puzzle moveLeft() const;
+        void moveDown();
+        void moveUp();
+        void moveRight();
+        void moveLeft();
         int findBlank() const;
 }; 
