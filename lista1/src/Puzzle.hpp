@@ -12,15 +12,16 @@ enum Action {
 };
 class Puzzle {
     public:
-        Puzzle(std::string startingState, unsigned int puzzleSize);
-        Puzzle(const char startingState[], unsigned int puzzleSize);
+        Puzzle(std::string startingState, unsigned int size);
+        Puzzle(const char startingState[], unsigned int size);
         std::vector<Puzzle> getNeighbors() const;
         int getManhattanDistance() const;
         bool isGoal() const;
 
         static std::string goalState;
         std::string currentState;
-        unsigned int size;
+        unsigned int puzzleSize;
+        unsigned int gridSize;
         int solutionLength;
         int lastAction;
     
@@ -28,11 +29,11 @@ class Puzzle {
 
     private:
         
-        Puzzle(std::string startingState, unsigned int puzzleSize, int length, int action);
-        Puzzle(const char startingState[], unsigned int puzzleSize, int length, int action);
-        void moveDown();
-        void moveUp();
-        void moveRight();
-        void moveLeft();
+        Puzzle(std::string startingState, unsigned int size, int length, int action);
+        Puzzle(const char startingState[], unsigned int size, int length, int action);
+        void moveBlankDown();
+        void moveBlankUp();
+        void moveBlankRight();
+        void moveBlankLeft();
         int findBlank() const;
 }; 
