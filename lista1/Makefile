@@ -1,19 +1,28 @@
 CC = g++
-CFLAGS = -Wall -I. # -Wextra
-OBJS = main.o ManhattanDistance.o BFS.o
+CFLAGS = -Wall -O3 # -Wextra
+SEARCHDIR = $(SRCDIR)/SearchAlg
+SRCDIR = src
+OBJDIR = obj
 
-main: $(OBJS)
-	$(CC) -o main $(OBJS)
-	rm *.o
+OBJECTS = $(addprefix $(OBJDIR)/, main.o puzzle.o BFS.o)
 
-main.o: main.cpp
-	$(CC) -c main.cpp $(CFLAGS)
+main: $(OBJECTS)
+	$(CC) $(OBJECTS) -o main $(CFLAGS)
 
-ManhattanDistance.o: src/Heuristics/ManhattanDistance.cpp
-	$(CC) -c src/Heuristics/ManhattanDistance.cpp $(CFLAGS)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
+	$(CC) -c $<  -o $@ $(CFLAGS)
 
-BFS.o: src/SearchAlg/BFS.cpp
-	$(CC) -c src/SearchAlg/BFS.cpp $(CFLAGS)
+$(OBJDIR)/BFS.o: $(SEARCHDIR)/BFS.cpp | $(OBJDIR)
+	$(CC) -c $< $(CFLAGS) -o $@
+
+$(OBJDIR):	
+	mkdir $(OBJDIR)
 
 clean:
-	rm main *.o
+ifeq ($(OS),Windows_NT)
+	-del /Q $(OBJDIR) $(BINDIR)
+	-del main.exe
+else
+	-rm main
+	-rm -rf $(OBJDIR) $(BINDIR)
+endif

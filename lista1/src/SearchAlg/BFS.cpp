@@ -1,63 +1,60 @@
-#include "src/SearchAlg/BFS.hpp"
-#include "State.cpp"
-#include "src/Heuristics/ManhattanDistance.hpp"
-#include "src/Puzzles/EightPuzzle.hpp"
-
+#include "BFS.hpp"
+#include "..\Puzzle.hpp"
+#include <string>
 #include <deque>
 #include <unordered_set>
 #include <chrono>
+#include <iostream>
 
-void BFS::Resolve() {
-    int nodesExpanded = 0;
-    
-    if (startState == getGoal()) {
-        printf("Start = goal\n");
-        return;
-    }
+int BFS(Puzzle initialState) {
+    int expandedNodes = 0;
 
-    char* data = new char[9];
-    for (size_t i = 0; i < startState.size(); i++) {
-        data[i] = (startState[i] == 0) ? ' ' : '0' + startState[i];
-    }
 
-    State initialState(data, 0, ManhattanDistance(EightPuzzle(startState)).Calculate());
-    delete[] data;
-
-    std::deque<State> open;
+    std::deque<Puzzle> open;
     std::unordered_set<std::string> closed;
 
     open.push_back(initialState);
-    closed.insert(std::string(initialState.data, 9));
+    closed.insert(initialState.currentState);
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
     while (!open.empty()) {
-        State current = open.front();
+        Puzzle current = open.front();
         open.pop_front();
+        expandedNodes++;
 
-        nodesExpanded++;
+        for (const Puzzle& neighbor : current.getNeighbors()) {
+            
+            /*
+            std::cout << neighbor << "  ";
+            std::cout << "open:" << std::endl;
+            for(auto &a : open){
+                std::cout<< "    " << a << std::endl;
+            }
+            */
 
-        for (const State& neighbor : current.getNeighbors()) {
+
             if (neighbor.isGoal()) {
-                int solutionLength = current.solutionLength + 1;
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-                printf("%d, ", nodesExpanded);
-                printf("%d, ", solutionLength);
+                printf("%d, ", expandedNodes);
+                printf("%d, ", neighbor.solutionLength);
                 printf("%.6f, ", elapsedTime.count());
                 printf("%.0f, ", 0.0f);
-                printf("%d\n", initialState.heuristicValue);
-                return;
+                printf("%d\n", initialState.getManhattanDistance());
+                return neighbor.solutionLength;
             }
 
             // s' not in closed
-            if (closed.find(std::string(neighbor.data, 9)) == closed.end()) {
-                closed.insert(std::string(neighbor.data, 9));
+            if (closed.find(neighbor.currentState) == closed.end()) {
+                closed.insert(neighbor.currentState);
                 open.push_back(neighbor);
+                //std::cout << "Pushed: " << neighbor << std::endl;
             }
         }
     }
-
+    printf("%d, ", expandedNodes);
     printf("Unsolvable\n");
+    return -1;
 }
