@@ -1,10 +1,10 @@
 CC = g++
-CFLAGS = -Wall -O3 # -Wextra
+CFLAGS = -I . -Wall #-O3 -Wextra
 SEARCHDIR = $(SRCDIR)/SearchAlg
 SRCDIR = src
 OBJDIR = obj
 
-OBJECTS = $(addprefix $(OBJDIR)/, main.o puzzle.o BFS.o)
+OBJECTS = $(addprefix $(OBJDIR)/, main.o Puzzle.o BFS.o)
 
 main: $(OBJECTS)
 	$(CC) $(OBJECTS) -o main $(CFLAGS)

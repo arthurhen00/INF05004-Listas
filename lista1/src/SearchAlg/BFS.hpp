@@ -1,5 +1,7 @@
 #pragma once
 
+#include "src/Puzzle.hpp"
+
 #include <vector>
-#include "..\Puzzle.hpp"
+
 int BFS(Puzzle initialState);

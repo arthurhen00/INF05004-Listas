@@ -1,10 +1,10 @@
+#include "src/Puzzle.hpp"
+
 #include <vector>
 #include <string.h>
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
-#include "Puzzle.hpp"
-
 
 std::string Puzzle::goalState;
 

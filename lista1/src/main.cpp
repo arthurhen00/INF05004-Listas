@@ -1,9 +1,10 @@
+#include "src/SearchAlg/BFS.hpp"
+#include "src/Puzzle.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>
 
-#include "SearchAlg\BFS.hpp"
-#include "Puzzle.hpp"
 #define EIGHT_PUZZLE 9
 #define FIFTEEN_PUZZLE 16
 int getPuzzleType(int argc, char** argv){

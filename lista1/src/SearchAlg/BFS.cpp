@@ -1,5 +1,6 @@
-#include "BFS.hpp"
-#include "..\Puzzle.hpp"
+#include "src/SearchAlg/BFS.hpp"
+#include "src/Puzzle.hpp"
+
 #include <string>
 #include <deque>
 #include <unordered_set>
