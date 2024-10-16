@@ -6,42 +6,22 @@
 #include <iostream>
 #include <cmath>
 
-std::string Puzzle::goalState;
+const std::vector<int> Puzzle::goalState = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-std::ostream& operator<<(std::ostream& os, const Puzzle& obj) {
-    os << "(" << obj.currentState << ")";
-    return os;
-}
+Puzzle::Puzzle(std::vector<int> startState) 
+: state(startState),
+g(0),
+lastAction(UNSET) { }
 
-Puzzle::Puzzle(std::string startingState, unsigned int size) 
-    : currentState(std::move(startingState)), puzzleSize(size), solutionLength(0), lastAction(UNSET) {
-    if (goalState.empty()) { 
-        for (unsigned int i = 0; i < puzzleSize; i++) {
-            goalState.push_back(i + '0'); 
-        }
-        gridSize = std::sqrt(puzzleSize);
-    }
-}
-
-Puzzle::Puzzle(std::string startingState, unsigned int size, int length, int action)
-    : currentState(std::move(startingState)),puzzleSize(size), solutionLength(length),lastAction(action){}
-
-Puzzle::Puzzle(const char startingState[], unsigned int size)
-    : currentState(startingState), puzzleSize(size), solutionLength(0), lastAction(UNSET) {
-    if (goalState.empty()) {
-        for (unsigned int i = 0; i < puzzleSize; i++) {
-            goalState.push_back(i + '0');
-        }
-        gridSize = std::sqrt(puzzleSize);
-    }
-}
-
-Puzzle::Puzzle(const char startingState[], unsigned int size, int length, int action)
-    : currentState(std::move(startingState)),puzzleSize(size), solutionLength(length),lastAction(action){}
+Puzzle::Puzzle(std::vector<int> state, int g, int lastAction) 
+: state(state),
+g(g),
+lastAction(lastAction) { }
 
 int Puzzle::findBlank() const {
-    for (unsigned int i = 0; i < puzzleSize; ++i) {
-        if (currentState[i] == '0') {
+    size_t stateSize = state.size();
+    for (size_t i = 0; i < stateSize; i++) {
+        if (state[i] == 0) {
             return i;
         }
     }
@@ -49,91 +29,66 @@ int Puzzle::findBlank() const {
 }
 
 void Puzzle::moveBlankDown() {
-    unsigned int blankIndex = findBlank();
+    int blankIndex = findBlank();
     if (blankIndex < (gridSize * gridSize - gridSize)) {
-        std::swap(currentState[blankIndex], currentState[blankIndex + 3]);
-        lastAction = DOWN;
-        ++solutionLength;
+        std::swap(state[blankIndex], state[blankIndex + gridSize]);
+        lastAction = Action::DOWN;
+        g++;
     }
 }
 
 void Puzzle::moveBlankUp() {
-    unsigned int blankIndex = findBlank();
-    if (blankIndex > (gridSize - 1)) {
-        std::swap(currentState[blankIndex], currentState[blankIndex - 3]);
-        lastAction = UP;
-        ++solutionLength;
+    int blankIndex = findBlank();
+    if (blankIndex >= gridSize) {
+        std::swap(state[blankIndex], state[blankIndex - gridSize]);
+        lastAction = Action::UP;
+        g++;
     }
 }
 
 void Puzzle::moveBlankRight() {
-    unsigned int blankIndex = findBlank();
-    if (blankIndex % gridSize != (gridSize-1)) {
-        std::swap(currentState[blankIndex], currentState[blankIndex + 1]);
-        lastAction = RIGHT;
-        ++solutionLength;
+    int blankIndex = findBlank();
+    if (blankIndex % gridSize != gridSize - 1) {
+        std::swap(state[blankIndex], state[blankIndex + 1]);
+        lastAction = Action::RIGHT;
+        g++;
     }
 }
 
 void Puzzle::moveBlankLeft() {
-    unsigned int blankIndex = findBlank();
+    int blankIndex = findBlank();
     if (blankIndex % gridSize != 0) {
-        std::swap(currentState[blankIndex], currentState[blankIndex - 1]);
-        lastAction = LEFT;
-        ++solutionLength;
+        std::swap(state[blankIndex], state[blankIndex - 1]);
+        lastAction = Action::LEFT;
+        g++;
     }
 }
 
 std::vector<Puzzle> Puzzle::getNeighbors() const {
     std::vector<Puzzle> neighbors;
     if (lastAction != DOWN) {
-        Puzzle up(*this);
+        Puzzle up(state, g, Action::UP);
         up.moveBlankUp();
-        neighbors.push_back(std::move(up));
+        neighbors.push_back(up);
     }
     if (lastAction != RIGHT) {
-        Puzzle left(*this);
+        Puzzle left(state, g, Action::LEFT);
         left.moveBlankLeft();
-        neighbors.push_back(std::move(left));
+        neighbors.push_back(left);
     }
     if (lastAction != LEFT) {
-        Puzzle right(*this);
+        Puzzle right(state, g, Action::RIGHT);
         right.moveBlankRight();
-        neighbors.push_back(std::move(right));
+        neighbors.push_back(right);
     }
     if (lastAction != UP) {
-        Puzzle down(*this);
+        Puzzle down(state, g, Action::DOWN);
         down.moveBlankDown();
-        neighbors.push_back(std::move(down));
+        neighbors.push_back(down);
     }
     return neighbors;
 }
 
 bool Puzzle::isGoal() const {
-    return (goalState == currentState);
-}
-
-
-int Puzzle::getManhattanDistance() const {
-    int totalDistance = 0;
-
-    for (unsigned int i = 0; i < puzzleSize; i++) {
-        int value = currentState[i];
-
-        if (value == 0) {
-            continue;
-        }
-
-        int currentRow = i / gridSize;
-        int currentCol = i % gridSize;
-
-        int goalRow = value / gridSize;
-        int goalCol = value % gridSize;
-
-        int distance = std::abs(currentRow - goalRow) + std::abs(currentCol - goalCol);
-
-        totalDistance += distance;
-    }
-
-    return totalDistance;
+    return (state == goalState);
 }

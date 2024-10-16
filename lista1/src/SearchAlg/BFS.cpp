@@ -1,5 +1,6 @@
 #include "src/SearchAlg/BFS.hpp"
 #include "src/Puzzle.hpp"
+#include "src/Heuristics/ManhattanDistance.hpp"
 
 #include <string>
 #include <deque>
@@ -7,15 +8,20 @@
 #include <chrono>
 #include <iostream>
 
-int BFS(Puzzle initialState) {
+int BFS(const Puzzle& puzzle) {
     int expandedNodes = 0;
-
 
     std::deque<Puzzle> open;
     std::unordered_set<std::string> closed;
 
-    open.push_back(initialState);
-    closed.insert(initialState.currentState);
+    // MUDAR?
+    std::string initialState;
+    for (int value : puzzle.state) {
+        initialState += (value == 0) ? '0' : '0' + value;
+    }
+
+    open.push_back(puzzle);
+    closed.insert(initialState);
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -25,37 +31,31 @@ int BFS(Puzzle initialState) {
         expandedNodes++;
 
         for (const Puzzle& neighbor : current.getNeighbors()) {
-            
-            /*
-            std::cout << neighbor << "  ";
-            std::cout << "open:" << std::endl;
-            for(auto &a : open){
-                std::cout<< "    " << a << std::endl;
-            }
-            */
-
-
             if (neighbor.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
                 printf("%d, ", expandedNodes);
-                printf("%d, ", neighbor.solutionLength);
+                printf("%d, ", neighbor.g);
                 printf("%.6f, ", elapsedTime.count());
                 printf("%.0f, ", 0.0f);
-                printf("%d\n", initialState.getManhattanDistance());
-                return neighbor.solutionLength;
+                printf("%d\n", ManhattanDistance(puzzle).Calculate());
+                return neighbor.g;
             }
 
-            // s' not in closed
-            if (closed.find(neighbor.currentState) == closed.end()) {
-                closed.insert(neighbor.currentState);
+            // MUDAR?'
+            std::string neighborState;
+            for (int value : neighbor.state) {
+                neighborState += (value == 0) ? '0' : '0' + value;
+            }
+
+            if (closed.find(neighborState) == closed.end()) {
+                closed.insert(neighborState);
                 open.push_back(neighbor);
-                //std::cout << "Pushed: " << neighbor << std::endl;
             }
         }
     }
-    printf("%d, ", expandedNodes);
+
     printf("Unsolvable\n");
     return -1;
 }

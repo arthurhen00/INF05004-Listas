@@ -4,4 +4,4 @@
 
 #include <vector>
 
-int BFS(Puzzle initialState);
+int BFS(const Puzzle& initialState);

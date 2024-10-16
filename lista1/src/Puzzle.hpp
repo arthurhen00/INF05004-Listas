@@ -12,25 +12,19 @@ enum Action {
 };
 class Puzzle {
     public:
-        Puzzle(std::string startingState, unsigned int size);
-        Puzzle(const char startingState[], unsigned int size);
-        std::vector<Puzzle> getNeighbors() const;
-        int getManhattanDistance() const;
-        bool isGoal() const;
-
-        static std::string goalState;
-        std::string currentState;
-        unsigned int puzzleSize;
-        unsigned int gridSize;
-        int solutionLength;
+        std::vector<int> state;
+        static const std::vector<int> goalState;
+        const static int gridSize = 3;
+        int g;
         int lastAction;
-    
-        friend std::ostream& operator<<(std::ostream& os, const Puzzle& obj);
 
+        Puzzle(std::vector<int> startState);
+        Puzzle(std::vector<int> startState, int g, int lastAction);
+
+        std::vector<Puzzle> getNeighbors() const;
+        bool isGoal() const;
+    
     private:
-        
-        Puzzle(std::string startingState, unsigned int size, int length, int action);
-        Puzzle(const char startingState[], unsigned int size, int length, int action);
         void moveBlankDown();
         void moveBlankUp();
         void moveBlankRight();
