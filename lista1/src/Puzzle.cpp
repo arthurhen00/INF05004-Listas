@@ -5,13 +5,16 @@
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
-const std::vector<char> Puzzle::goalState = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
 
-Puzzle::Puzzle(std::vector<char> startState) 
-: state(startState), g(0), h(ManhattanDistance()), lastAction(UNSET) {}
+Puzzle::Puzzle(std::vector<char> state) 
+: state(state), g(0), h(ManhattanDistance()), lastAction(UNSET){
+    if(state.size() == 9){
+        gridSize = 3;
+    }else{
+        gridSize = 4;
+    }
+}
 
-Puzzle::Puzzle(std::vector<char> state, int g, int lastAction) 
-: state(state), g(g), lastAction(lastAction) {}
 
 int Puzzle::findBlank() const {
     size_t stateSize = state.size();

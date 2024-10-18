@@ -146,6 +146,7 @@ void Search::AStar(Puzzle& puzzle){
         std::string currentState(current.state.state.begin(), current.state.state.end());
         if (closed.find(currentState) == closed.end()) {
             expandedNodes++;
+
             closed.insert(currentState);
             if (current.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
