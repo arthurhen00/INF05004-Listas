@@ -5,19 +5,18 @@
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
+const std::vector<char> Puzzle::goalState = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
 
-const std::vector<int> Puzzle::goalState = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-
-Puzzle::Puzzle(std::vector<int> startState) 
+Puzzle::Puzzle(std::vector<char> startState) 
 : state(startState), g(0), h(ManhattanDistance()), lastAction(UNSET) {}
 
-Puzzle::Puzzle(std::vector<int> state, int g, int lastAction) 
+Puzzle::Puzzle(std::vector<char> state, int g, int lastAction) 
 : state(state), g(g), lastAction(lastAction) {}
 
 int Puzzle::findBlank() const {
     size_t stateSize = state.size();
     for (size_t i = 0; i < stateSize; i++) {
-        if (state[i] == 0) {
+        if (state[i] == '0') {
             return i;
         }
     }
@@ -98,7 +97,7 @@ int Puzzle::ManhattanDistance() {
     int totalDistance = 0;
 
     for (size_t i = 0; i < state.size(); i++) {
-        int value = state[i];
+        int value = state[i] - '0';
 
         if (value == 0) {
             continue;

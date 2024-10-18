@@ -12,15 +12,15 @@ enum Action {
 };
 class Puzzle {
     public:
-        std::vector<int> state;
-        static const std::vector<int> goalState;
+        std::vector<char> state;
+        static const std::vector<char> goalState;
         const static int gridSize = 3;
         int g;
         int h;
         int lastAction;
 
-        Puzzle(std::vector<int> startState);
-        Puzzle(std::vector<int> startState, int g, int lastAction);
+        Puzzle(std::vector<char> startState);
+        Puzzle(std::vector<char> startState, int g, int lastAction);
 
         std::vector<Puzzle> getNeighbors() const;
         bool isGoal() const;

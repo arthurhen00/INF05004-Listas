@@ -32,18 +32,14 @@ bool AStarPriorityComparator::operator()(const PriorityPuzzle& t, const Priority
     return t.insertionOrder < other.insertionOrder;
 }
 
-void Search::BFS(std::vector<int>& startState) {
+void Search::BFS(Puzzle& puzzle) {
     int expandedNodes = 0;
     std::deque<Puzzle> open;
     std::unordered_set<std::string> closed;
 
-    // MUDAR?
-    std::string initialState;
-    for (int value : startState) {
-        initialState += (value == 0) ? '0' : '0' + value;
-    }
 
-    open.push_back(Puzzle(startState));
+    std::string initialState(puzzle.state.begin(), puzzle.state.end());
+    open.push_back(puzzle);
     closed.insert(initialState);
 
     auto startTime = std::chrono::high_resolution_clock::now();
@@ -63,16 +59,12 @@ void Search::BFS(std::vector<int>& startState) {
                 printf("%d, ", neighbor.g);
                 printf("%.6f, ", elapsedTime.count());
                 printf("%.0f, ", 0.0f);
-                printf("%d\n", Puzzle(startState).ManhattanDistance());
+                printf("%d\n", puzzle.ManhattanDistance());
                 return;
             }
 
-            // MUDAR?'
-            std::string neighborState;
-            for (int value : neighbor.state) {
-                neighborState += (value == 0) ? '0' : '0' + value;
-            }
 
+            std::string neighborState(neighbor.state.begin(), neighbor.state.end());
             if (closed.find(neighborState) == closed.end()) {
                 closed.insert(neighborState);
                 open.push_back(neighbor);
@@ -84,12 +76,11 @@ void Search::BFS(std::vector<int>& startState) {
     return;
 }
 
-void Search::GBFS(std::vector<int>& startState) {
+void Search::GBFS(Puzzle& puzzle) {
     int nodesExpanded = 0;
     int insertOrder = 1;
 
-    Puzzle initialPuzzle(startState);
-    PriorityPuzzle initialStatePP(initialPuzzle, insertOrder);
+    PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
     std::priority_queue<PriorityPuzzle, std::vector<PriorityPuzzle>, GBFSPriorityComparator> open;
     std::unordered_set<std::string> closed;
@@ -102,14 +93,11 @@ void Search::GBFS(std::vector<int>& startState) {
         PriorityPuzzle n = open.top();
         open.pop();
 
-        std::string newState;
-        for (int value : n.state.state) {
-            newState += (value == 0) ? '0' : '0' + value;
-        }
+        std::string currentState(n.state.state.begin(), n.state.state.end());
 
-        if (closed.find(newState) == closed.end()) {
+        if (closed.find(currentState) == closed.end()) {
             nodesExpanded++;
-            closed.insert(newState);
+            closed.insert(currentState);
             
             if (n.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
@@ -118,17 +106,14 @@ void Search::GBFS(std::vector<int>& startState) {
                 printf("%d, ", nodesExpanded - 1);
                 printf("%d, ", n.state.g);
                 printf("%.6f, ", elapsedTime.count());
-                printf("%d\n", Puzzle(startState).ManhattanDistance());
+                printf("%d\n", puzzle.ManhattanDistance());
                 return;
             }
 
             for (Puzzle& neighbor : n.state.getNeighbors()) {
-                std::string newState2;
-                for (int value : neighbor.state) {
-                    newState2 += (value == 0) ? '0' : '0' + value;
-                }
 
-                if (closed.find(newState2) == closed.end()) {
+                std::string neighborState(neighbor.state.begin(), neighbor.state.end());
+                if (closed.find(neighborState) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
                     open.push(std::move(pp));
@@ -140,12 +125,11 @@ void Search::GBFS(std::vector<int>& startState) {
     return;
 }
 
-void Search::AStar(std::vector<int>& startState){
+void Search::AStar(Puzzle& puzzle){
     int expandedNodes = 0;
     int insertOrder = 1;
 
-    Puzzle initialPuzzle(startState);
-    PriorityPuzzle initialStatePP(initialPuzzle, insertOrder);
+    PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
     std::priority_queue<PriorityPuzzle,std::vector<PriorityPuzzle>, AStarPriorityComparator> open;
     std::unordered_set<std::string> closed;
@@ -159,14 +143,10 @@ void Search::AStar(std::vector<int>& startState){
         open.pop();
         
 
-        // MUDAR?'
-        std::string neighborState;
-        for (int value : current.state.state) {
-            neighborState += (value == 0) ? '0' : '0' + value;
-        }
-        if (closed.find(neighborState) == closed.end()) {
+        std::string currentState(current.state.state.begin(), current.state.state.end());
+        if (closed.find(currentState) == closed.end()) {
             expandedNodes++;
-            closed.insert(neighborState);
+            closed.insert(currentState);
             if (current.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
@@ -175,16 +155,12 @@ void Search::AStar(std::vector<int>& startState){
                 std::cout << current.state.g << ", ";
                 std::cout << elapsedTime.count() << ", ";
                 std::cout << 0.0f << ", ";
-                std::cout << Puzzle(startState).ManhattanDistance() << "\n";
+                std::cout << puzzle.ManhattanDistance() << "\n";
                 return;
             }
             for (const Puzzle& neighbor : current.state.getNeighbors()) {
-                std::string newState2;
-                for (int value : neighbor.state) {
-                    newState2 += (value == 0) ? '0' : '0' + value;
-                }
-
-                if (closed.find(newState2) == closed.end()) {
+                std::string neighborState(neighbor.state.begin(), neighbor.state.end());
+                if (closed.find(neighborState) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
                     open.push(std::move(pp));
@@ -200,16 +176,15 @@ void Search::AStar(std::vector<int>& startState){
 
 
 
-void Search::IDAStar(std::vector<int>& startState){
+void Search::IDAStar(Puzzle& puzzle){
     int expandedNodes = 0;
-    Puzzle root(startState);
-    int bound = root.h;
+    int bound = puzzle.h;
     auto startTime = std::chrono::high_resolution_clock::now();
     std::unordered_set<std::string> closed;
 
     while (true)
     {
-        int result = IDAStarSearch(root, bound, closed, expandedNodes);
+        int result = IDAStarSearch(puzzle, bound, closed, expandedNodes);
         
         if(result < 0){
             auto endTime = std::chrono::high_resolution_clock::now();
@@ -218,7 +193,7 @@ void Search::IDAStar(std::vector<int>& startState){
             std::cout << -result << ", ";
             std::cout << elapsedTime.count() << ", ";
             std::cout << 0.0f << ", ";
-            std::cout << root.h << "\n";
+            std::cout << puzzle.h << "\n";
             return;
         }
         bound = result;
@@ -254,15 +229,14 @@ int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::st
 }
 
 
-void Search::IDFS(std::vector<int>& startState){
+void Search::IDFS(Puzzle& puzzle){
     int depth = 1;
     int expandedNodes = 0;
-    Puzzle root(startState);
     auto startTime = std::chrono::high_resolution_clock::now();
 
     while (true)
     {
-        int result = IDFSSearch(root,depth - 1,expandedNodes);
+        int result = IDFSSearch(puzzle,depth - 1,expandedNodes);
         if(result > 0){
             auto endTime = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsedTime = endTime - startTime;
@@ -270,7 +244,7 @@ void Search::IDFS(std::vector<int>& startState){
             std::cout << result << ", ";
             std::cout << elapsedTime.count() << ", ";
             std::cout << 0.0f << ", ";
-            std::cout << root.h << "\n";
+            std::cout << puzzle.h << "\n";
             return;
         }
         depth++;

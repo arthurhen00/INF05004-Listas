@@ -47,38 +47,45 @@ int main(int argc, char** argv) {
     // for (auto& p: puzzles){
     //     BFS(p);
     // }
+
+    
+    Puzzle puzzle1 = Puzzle({'0','6','1','7','4','2','3','8','5'});
+    Puzzle puzzle2 = Puzzle({'5','0','2','6','4','8','1','7','3'});
+    Puzzle puzzle3 = Puzzle({'2','4','7','0','3','6','8','1','5'});
+    
     Search search = Search();
-    std::vector<int> test1 = {0,6,1,7,4,2,3,8,5};
-    std::vector<int> test2 = {5,0,2,6,4,8,1,7,3};
-    std::vector<int> test3 = {2,4,7,0,3,6,8,1,5};
-
-    search.BFS(test1);
-    search.BFS(test2);
-    search.BFS(test3);
-
-    printf("\n");
-
-    search.GBFS(test1);
-    search.GBFS(test2);
-    search.GBFS(test3);
-
-    printf("\n");
+    std::cout << std::endl << "Astar:" << std::endl;
     
-    search.AStar(test1);
-    search.AStar(test2);
-    search.AStar(test3);
+    search.AStar(puzzle1);
+    search.AStar(puzzle2);
+    search.AStar(puzzle3);
 
-    printf("\n");
-    
-    search.IDAStar(test1);
-    search.IDAStar(test2);
-    search.IDAStar(test3);
+    std::cout << std::endl << "BFS:" << std::endl;
+    search.BFS(puzzle1);
+    search.BFS(puzzle2);
+    search.BFS(puzzle3);
 
-    printf("\n");
+    std::cout << std::endl << "IDAStar:" << std::endl;
     
-    search.IDFS(test1);
-    search.IDFS(test2);
-    search.IDFS(test3);
+    search.IDAStar(puzzle1);
+    search.IDAStar(puzzle2);
+    search.IDAStar(puzzle3);
+
+    std::cout << std::endl << "IDFS:" << std::endl;
+    
+    search.IDFS(puzzle1);
+    search.IDFS(puzzle2);
+    search.IDFS(puzzle3);
+
+    std::cout << std::endl << "GBFS:" << std::endl;
+
+    search.GBFS(puzzle1);
+    search.GBFS(puzzle2);
+    search.GBFS(puzzle3);
+  
+
+    
+
 
     return EXIT_SUCCESS;
 }
