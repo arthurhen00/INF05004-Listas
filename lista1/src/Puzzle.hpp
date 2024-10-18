@@ -27,7 +27,7 @@ class Puzzle {
 
         void printPuzzle();
 
-        int ManhattanDistance(std::vector<int> state);
+        int ManhattanDistance();
     
     private:
         void moveBlankDown(const int blankIndex);

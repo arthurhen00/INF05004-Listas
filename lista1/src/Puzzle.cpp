@@ -9,7 +9,7 @@
 const std::vector<int> Puzzle::goalState = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
 Puzzle::Puzzle(std::vector<int> startState) 
-: state(startState), g(0), h(ManhattanDistance(startState)), lastAction(UNSET) {}
+: state(startState), g(0), h(ManhattanDistance()), lastAction(UNSET) {}
 
 Puzzle::Puzzle(std::vector<int> state, int g, int lastAction) 
 : state(state), g(g), lastAction(lastAction) {}
@@ -28,70 +28,61 @@ int Puzzle::findBlank() const {
 }
 
 void Puzzle::moveBlankDown(const int blankIndex) {
-    if (blankIndex < (gridSize * gridSize - gridSize)) {
-        std::swap(state[blankIndex], state[blankIndex + gridSize]);
-        lastAction = Action::DOWN;
-        g++;
-        h = ManhattanDistance(state);
-    }
+    std::swap(state[blankIndex], state[blankIndex + gridSize]);
+    lastAction = Action::DOWN;
+    g++;
+    h = ManhattanDistance();
 }
 
 void Puzzle::moveBlankUp(const int blankIndex) {
-    if (blankIndex >= gridSize) {
-        std::swap(state[blankIndex], state[blankIndex - gridSize]);
-        lastAction = Action::UP;
-        g++;
-        h = ManhattanDistance(state);
-    }
+    std::swap(state[blankIndex], state[blankIndex - gridSize]);
+    lastAction = Action::UP;
+    g++;
+    h = ManhattanDistance();
 }
 
 void Puzzle::moveBlankRight(const int blankIndex) {
-    if (blankIndex % gridSize != gridSize - 1) {
-        std::swap(state[blankIndex], state[blankIndex + 1]);
-        lastAction = Action::RIGHT;
-        g++;
-        h = ManhattanDistance(state);
-    }
+    std::swap(state[blankIndex], state[blankIndex + 1]);
+    lastAction = Action::RIGHT;
+    g++;
+    h = ManhattanDistance();
 }
 
 void Puzzle::moveBlankLeft(const int blankIndex) {
-    
-    if (blankIndex % gridSize != 0) {
-        std::swap(state[blankIndex], state[blankIndex - 1]);
-        lastAction = Action::LEFT;
-        g++;
-        h = ManhattanDistance(state);
-    }
+    std::swap(state[blankIndex], state[blankIndex - 1]);
+    lastAction = Action::LEFT;
+    g++;
+    h = ManhattanDistance();
 }
 
 std::vector<Puzzle> Puzzle::getNeighbors() const {
     std::vector<Puzzle> neighbors;
     int blankIndex = findBlank();
-    if (lastAction != DOWN) {
-        Puzzle up(state, g, Action::UP);
+    if (lastAction != DOWN && blankIndex >= gridSize) {
+        Puzzle up(*this);
         up.moveBlankUp(blankIndex);
-        neighbors.push_back(std::move(up));
+        if(up.state != state) neighbors.push_back(std::move(up));
     }
-    if (lastAction != RIGHT) {
-        Puzzle left(state, g, Action::LEFT);
+    if (lastAction != RIGHT && blankIndex % gridSize != 0) {
+        Puzzle left(*this);
         left.moveBlankLeft(blankIndex);
-        neighbors.push_back(std::move(left));
+        if(left.state != state) neighbors.push_back(std::move(left));
     }
-    if (lastAction != LEFT) {
-        Puzzle right(state, g, Action::RIGHT);
+    if (lastAction != LEFT && blankIndex % gridSize != gridSize - 1) {
+        Puzzle right(*this);
         right.moveBlankRight(blankIndex);
-        neighbors.push_back(std::move(right));
+        if(right.state != state) neighbors.push_back(std::move(right));
     }
-    if (lastAction != UP) {
-        Puzzle down(state, g, Action::DOWN);
+    if (lastAction != UP && blankIndex < (gridSize * gridSize - gridSize)) {
+        Puzzle down(*this);
         down.moveBlankDown(blankIndex);
-        neighbors.push_back(std::move(down));
+        if(down.state != state) neighbors.push_back(std::move(down));
     }
     return neighbors;
 }
 
 bool Puzzle::isGoal() const {
-    return (state == goalState);
+    return h == 0;
 }
 
 void Puzzle::printPuzzle() {
@@ -103,11 +94,10 @@ void Puzzle::printPuzzle() {
     }
 }
 
-int Puzzle::ManhattanDistance(std::vector<int> state) {
-    size_t stateSize = state.size();
+int Puzzle::ManhattanDistance() {
     int totalDistance = 0;
 
-    for (size_t i = 0; i < stateSize; i++) {
+    for (size_t i = 0; i < state.size(); i++) {
         int value = state[i];
 
         if (value == 0) {
