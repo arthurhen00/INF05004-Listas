@@ -9,18 +9,10 @@
 const std::vector<int> Puzzle::goalState = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
 Puzzle::Puzzle(std::vector<int> startState) 
-: state(startState),
-g(0),
-lastAction(UNSET) {
-    h = this->ManhattanDistance(this->state);
-}
+: state(startState), g(0), h(ManhattanDistance(startState)), lastAction(UNSET) {}
 
 Puzzle::Puzzle(std::vector<int> state, int g, int lastAction) 
-: state(state),
-g(g),
-lastAction(lastAction) {
-    h = this->ManhattanDistance(this->state);
-}
+: state(state), g(g), lastAction(lastAction) {}
 
 int Puzzle::findBlank() const {
     size_t stateSize = state.size();
@@ -38,6 +30,7 @@ void Puzzle::moveBlankDown() {
         std::swap(state[blankIndex], state[blankIndex + gridSize]);
         lastAction = Action::DOWN;
         g++;
+        h = ManhattanDistance(state);
     }
 }
 
@@ -47,6 +40,7 @@ void Puzzle::moveBlankUp() {
         std::swap(state[blankIndex], state[blankIndex - gridSize]);
         lastAction = Action::UP;
         g++;
+        h = ManhattanDistance(state);
     }
 }
 
@@ -56,6 +50,7 @@ void Puzzle::moveBlankRight() {
         std::swap(state[blankIndex], state[blankIndex + 1]);
         lastAction = Action::RIGHT;
         g++;
+        h = ManhattanDistance(state);
     }
 }
 
@@ -65,6 +60,7 @@ void Puzzle::moveBlankLeft() {
         std::swap(state[blankIndex], state[blankIndex - 1]);
         lastAction = Action::LEFT;
         g++;
+        h = ManhattanDistance(state);
     }
 }
 
@@ -73,26 +69,22 @@ std::vector<Puzzle> Puzzle::getNeighbors() const {
     if (lastAction != DOWN) {
         Puzzle up(state, g, Action::UP);
         up.moveBlankUp();
-        up.h = up.ManhattanDistance(up.state);
-        neighbors.push_back(up);
+        neighbors.push_back(std::move(up));
     }
     if (lastAction != RIGHT) {
         Puzzle left(state, g, Action::LEFT);
         left.moveBlankLeft();
-        left.h = left.ManhattanDistance(left.state);
-        neighbors.push_back(left);
+        neighbors.push_back(std::move(left));
     }
     if (lastAction != LEFT) {
         Puzzle right(state, g, Action::RIGHT);
         right.moveBlankRight();
-        right.h = right.ManhattanDistance(right.state);
-        neighbors.push_back(right);
+        neighbors.push_back(std::move(right));
     }
     if (lastAction != UP) {
         Puzzle down(state, g, Action::DOWN);
         down.moveBlankDown();
-        down.h = down.ManhattanDistance(down.state);
-        neighbors.push_back(down);
+        neighbors.push_back(std::move(down));
     }
     return neighbors;
 }
