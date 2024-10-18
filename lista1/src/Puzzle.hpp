@@ -16,6 +16,7 @@ class Puzzle {
         static const std::vector<int> goalState;
         const static int gridSize = 3;
         int g;
+        int h;
         int lastAction;
 
         Puzzle(std::vector<int> startState);
@@ -23,6 +24,10 @@ class Puzzle {
 
         std::vector<Puzzle> getNeighbors() const;
         bool isGoal() const;
+
+        void printPuzzle();
+
+        int ManhattanDistance(std::vector<int> state);
     
     private:
         void moveBlankDown();

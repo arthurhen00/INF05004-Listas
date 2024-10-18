@@ -1,11 +1,11 @@
 CC = g++
-CFLAGS = -I . -Wall #-O3 -Wextra
+CFLAGS = -I . -Wall -O3# -Wextra
 SEARCHDIR = $(SRCDIR)/SearchAlg
 SEARCHDIRR = $(SRCDIR)/Heuristics
 SRCDIR = src
 OBJDIR = obj
 
-OBJECTS = $(addprefix $(OBJDIR)/, main.o Puzzle.o BFS.o ManhattanDistance.o)
+OBJECTS = $(addprefix $(OBJDIR)/, main.o Puzzle.o Search.o)
 
 main: $(OBJECTS)
 	$(CC) $(OBJECTS) -o main $(CFLAGS)
@@ -13,10 +13,7 @@ main: $(OBJECTS)
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CC) -c $<  -o $@ $(CFLAGS)
 
-$(OBJDIR)/BFS.o: $(SEARCHDIR)/BFS.cpp | $(OBJDIR)
-	$(CC) -c $< $(CFLAGS) -o $@
-
-$(OBJDIR)/ManhattanDistance.o: $(SEARCHDIRR)/ManhattanDistance.cpp | $(OBJDIR)
+$(OBJDIR)/Search.o: $(SEARCHDIR)/Search.cpp | $(OBJDIR)
 	$(CC) -c $< $(CFLAGS) -o $@
 
 $(OBJDIR):	

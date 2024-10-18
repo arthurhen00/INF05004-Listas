@@ -1,4 +1,4 @@
-#include "src/SearchAlg/BFS.hpp"
+#include "src/SearchAlg/Search.hpp"
 #include "src/Puzzle.hpp"
 
 #include <iostream>
@@ -36,7 +36,6 @@
 //     return puzzles;
 // }
 
-
 int main(int argc, char** argv) {
     // int puzzleType = getPuzzleType(argc, argv);
     // if(puzzleType == 0){
@@ -49,11 +48,21 @@ int main(int argc, char** argv) {
     //     BFS(p);
     // }
 
-    BFS(Puzzle({0,6,1,7,4,2,3,8,5}));
-    BFS(Puzzle({5,0,2,6,4,8,1,7,3}));
-    BFS(Puzzle({2,4,7,0,3,6,8,1,5}));
+    Search().BFS({0,6,1,7,4,2,3,8,5});
+    Search().BFS({5,0,2,6,4,8,1,7,3});
+    Search().BFS({2,4,7,0,3,6,8,1,5});
 
     printf("\n");
+
+    Search().GBFS({0,6,1,7,4,2,3,8,5});
+    Search().GBFS({5,0,2,6,4,8,1,7,3});
+    Search().GBFS({2,4,7,0,3,6,8,1,5});
+
+    printf("\n");
+    
+    Search().AStar({0,6,1,7,4,2,3,8,5});
+    Search().AStar({5,0,2,6,4,8,1,7,3});
+    Search().AStar({2,4,7,0,3,6,8,1,5});
 
     return EXIT_SUCCESS;
 }
