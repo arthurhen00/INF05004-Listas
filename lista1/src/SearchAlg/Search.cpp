@@ -17,13 +17,13 @@ bool PriorityPuzzle::operator<(const PriorityPuzzle& other) const {
     return this->insertionOrder < other.insertionOrder;
 }
 
-bool GBFSPriorityComparator::operator()(const PriorityPuzzle t, const PriorityPuzzle other) const {
+bool GBFSPriorityComparator::operator()(const PriorityPuzzle& t, const PriorityPuzzle& other) const {
     if (t.state.h != other.state.h) return t.state.h > other.state.h;
     if (t.state.g != other.state.g) return t.state.g < other.state.g;
     return t.insertionOrder < other.insertionOrder;
 }
 
-bool AStarPriorityComparator::operator()(const PriorityPuzzle t, const PriorityPuzzle other) const {
+bool AStarPriorityComparator::operator()(const PriorityPuzzle& t, const PriorityPuzzle& other) const {
     if (t.state.h + t.state.g != other.state.h + other.state.g) 
         return t.state.h + t.state.g > other.state.h + other.state.g;
     if (t.state.g != other.state.g) 
@@ -33,7 +33,6 @@ bool AStarPriorityComparator::operator()(const PriorityPuzzle t, const PriorityP
 
 void Search::BFS(std::vector<int> startState) {
     int expandedNodes = 0;
-
     std::deque<Puzzle> open;
     std::unordered_set<std::string> closed;
 
@@ -52,6 +51,7 @@ void Search::BFS(std::vector<int> startState) {
         Puzzle current = open.front();
         open.pop_front();
         expandedNodes++;
+        
 
         for (const Puzzle& neighbor : current.getNeighbors()) {
             if (neighbor.isGoal()) {
@@ -93,7 +93,7 @@ void Search::GBFS(std::vector<int> startState) {
     std::priority_queue<PriorityPuzzle, std::vector<PriorityPuzzle>, GBFSPriorityComparator> open;
     std::unordered_set<std::string> closed;
 
-    open.push(initialStatePP);
+    open.push(std::move(initialStatePP));
 
     auto startTime = std::chrono::high_resolution_clock::now();
     
@@ -130,7 +130,7 @@ void Search::GBFS(std::vector<int> startState) {
                 if (closed.find(newState2) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
-                    open.push(pp);
+                    open.push(std::move(pp));
                 }
             }
         }
@@ -149,7 +149,7 @@ void Search::AStar(std::vector<int> startState){
     std::priority_queue<PriorityPuzzle,std::vector<PriorityPuzzle>, AStarPriorityComparator> open;
     std::unordered_set<std::string> closed;
 
-    open.push(initialStatePP);
+    open.push(std::move(initialStatePP));
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -186,7 +186,7 @@ void Search::AStar(std::vector<int> startState){
                 if (closed.find(newState2) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
-                    open.push(pp);
+                    open.push(std::move(pp));
                 }
             }
         }

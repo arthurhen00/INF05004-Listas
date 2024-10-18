@@ -22,8 +22,8 @@ struct PriorityPuzzle {
 };
 
 struct GBFSPriorityComparator {
-    bool operator()(const PriorityPuzzle t, const PriorityPuzzle other) const;
+    bool operator()(const PriorityPuzzle& t, const PriorityPuzzle& other) const;
 };
 struct AStarPriorityComparator {
-    bool operator()(const PriorityPuzzle t, const PriorityPuzzle other) const;
+    bool operator()(const PriorityPuzzle& t, const PriorityPuzzle& other) const;
 };

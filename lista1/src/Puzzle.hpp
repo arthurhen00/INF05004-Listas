@@ -30,9 +30,9 @@ class Puzzle {
         int ManhattanDistance(std::vector<int> state);
     
     private:
-        void moveBlankDown();
-        void moveBlankUp();
-        void moveBlankRight();
-        void moveBlankLeft();
+        void moveBlankDown(const int blankIndex);
+        void moveBlankUp(const int blankIndex);
+        void moveBlankRight(const int blankIndex);
+        void moveBlankLeft(const int blankIndex);
         int findBlank() const;
 }; 
