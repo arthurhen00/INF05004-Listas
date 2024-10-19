@@ -7,12 +7,14 @@
 #include <cmath>
 
 Puzzle::Puzzle(std::vector<char> state) 
-: state(state), g(0), h(ManhattanDistance()), lastAction(UNSET){
+: state(state), g(0), lastAction(UNSET){
     if(state.size() == 9){
         gridSize = 3;
     }else{
         gridSize = 4;
     }
+
+    h = ManhattanDistance();
 }
 
 
@@ -101,16 +103,19 @@ int Puzzle::ManhattanDistance() {
 
     for (size_t i = 0; i < state.size(); i++) {
         int value = state[i] - '0';
+        if (state[i] >= 'a') {
+            value = state[i] - 'a' + 10;
+        }
 
         if (value == 0) {
             continue;
         }
 
-        int currentRow = i / 3;
-        int currentCol = i % 3;
+        int currentRow = i / gridSize;
+        int currentCol = i % gridSize;
 
-        int goalRow = value / 3;
-        int goalCol = value % 3;
+        int goalRow = value / gridSize;
+        int goalCol = value % gridSize;
 
         int distance = std::abs(currentRow - goalRow) + std::abs(currentCol - goalCol);
 
