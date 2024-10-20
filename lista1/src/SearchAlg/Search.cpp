@@ -55,11 +55,13 @@ void Search::BFS(Puzzle& puzzle) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-                printf("%d, ", expandedNodes);
-                printf("%d, ", neighbor.g);
-                printf("%.6f, ", elapsedTime.count());
-                printf("%.0f, ", 0.0f);
-                printf("%d\n", puzzle.ManhattanDistance());
+
+                std::cout << expandedNodes << ", ";
+                std::cout << neighbor.g << ", ";
+                std::cout << elapsedTime.count() << ", ";
+                std::cout << 0.0f<< ", ";
+                std::cout << puzzle.ManhattanDistance() << "\n";
+
                 return;
             }
 
@@ -79,6 +81,9 @@ void Search::BFS(Puzzle& puzzle) {
 void Search::GBFS(Puzzle& puzzle) {
     int nodesExpanded = 0;
     int insertOrder = 1;
+
+    heuristicAccum = 0;
+    heuristicCounter = 0;
 
     PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
@@ -103,10 +108,11 @@ void Search::GBFS(Puzzle& puzzle) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-                printf("%d, ", nodesExpanded - 1);
-                printf("%d, ", n.state.g);
-                printf("%.6f, ", elapsedTime.count());
-                printf("%d\n", puzzle.ManhattanDistance());
+                std::cout << nodesExpanded - 1 << ", ";
+                std::cout << n.state.g << ", ";
+                std::cout << elapsedTime.count() << ", ";
+                std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
+                std::cout << puzzle.ManhattanDistance() << "\n";
                 return;
             }
 
@@ -128,13 +134,17 @@ void Search::GBFS(Puzzle& puzzle) {
 void Search::AStar(Puzzle& puzzle){
     int expandedNodes = 0;
     int insertOrder = 1;
-
+    heuristicAccum = 0;
+    heuristicCounter = 0;
     PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
     std::priority_queue<PriorityPuzzle,std::vector<PriorityPuzzle>, AStarPriorityComparator> open;
     std::unordered_set<std::string> closed;
 
+
     open.push(std::move(initialStatePP));
+
+
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -142,11 +152,10 @@ void Search::AStar(Puzzle& puzzle){
         PriorityPuzzle current = open.top();
         open.pop();
         
-
         std::string currentState(current.state.state.begin(), current.state.state.end());
         if (closed.find(currentState) == closed.end()) {
             expandedNodes++;
-
+            
             closed.insert(currentState);
             if (current.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
@@ -155,7 +164,7 @@ void Search::AStar(Puzzle& puzzle){
                 std::cout << expandedNodes - 1 << ", ";
                 std::cout << current.state.g << ", ";
                 std::cout << elapsedTime.count() << ", ";
-                std::cout << 0.0f << ", ";
+                std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
                 std::cout << puzzle.ManhattanDistance() << "\n";
                 return;
             }
@@ -182,7 +191,8 @@ void Search::IDAStar(Puzzle& puzzle){
     int bound = puzzle.h;
     auto startTime = std::chrono::high_resolution_clock::now();
     std::unordered_set<std::string> closed;
-
+    heuristicAccum = 0;
+    heuristicCounter = 0;
     while (true)
     {
         int result = IDAStarSearch(puzzle, bound, closed, expandedNodes);
@@ -193,7 +203,7 @@ void Search::IDAStar(Puzzle& puzzle){
             std::cout << expandedNodes<< ", ";
             std::cout << -result << ", ";
             std::cout << elapsedTime.count() << ", ";
-            std::cout << 0.0f << ", ";
+            std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
             std::cout << puzzle.h << "\n";
             return;
         }
@@ -204,6 +214,7 @@ void Search::IDAStar(Puzzle& puzzle){
 
 int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::string>& closed, int &expandedNodes){
     int f = current.g + current.h;
+    
     
     if(f > bound){
         return f;
@@ -217,7 +228,7 @@ int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::st
     }
 
     int min = std::numeric_limits<int>::max();
-    expandedNodes++;
+    expandedNodes++; 
     for(Puzzle& neighbor : current.getNeighbors()){
         int result = IDAStarSearch(neighbor,bound, closed, expandedNodes);
         if(result < 0) return result;
@@ -234,7 +245,8 @@ void Search::IDFS(Puzzle& puzzle){
     int depth = 1;
     int expandedNodes = 0;
     auto startTime = std::chrono::high_resolution_clock::now();
-
+    heuristicAccum = 0;
+    heuristicCounter = 0;
     while (true)
     {
         int result = IDFSSearch(puzzle,depth - 1,expandedNodes);
@@ -244,7 +256,7 @@ void Search::IDFS(Puzzle& puzzle){
             std::cout << expandedNodes<< ", ";
             std::cout << result << ", ";
             std::cout << elapsedTime.count() << ", ";
-            std::cout << 0.0f << ", ";
+            std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
             std::cout << puzzle.h << "\n";
             return;
         }

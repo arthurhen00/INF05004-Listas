@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 
+extern size_t heuristicAccum;
+extern size_t heuristicCounter;
 enum Action {
     UNSET,
     UP,

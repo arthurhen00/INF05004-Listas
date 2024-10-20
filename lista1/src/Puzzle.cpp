@@ -6,6 +6,10 @@
 #include <iostream>
 #include <cmath>
 
+
+size_t heuristicAccum = 0;
+size_t heuristicCounter = 0;
+
 Puzzle::Puzzle(std::vector<char> state) 
 : state(state), g(0), lastAction(UNSET){
     if(state.size() == 9){
@@ -100,7 +104,7 @@ void Puzzle::printPuzzle() {
 
 int Puzzle::ManhattanDistance() {
     int totalDistance = 0;
-
+    heuristicCounter++;
     for (size_t i = 0; i < state.size(); i++) {
         int value = state[i] - '0';
         if (state[i] >= 'a') {
@@ -122,5 +126,6 @@ int Puzzle::ManhattanDistance() {
         totalDistance += distance;
     }
 
+    heuristicAccum+=totalDistance;
     return totalDistance;
 }
