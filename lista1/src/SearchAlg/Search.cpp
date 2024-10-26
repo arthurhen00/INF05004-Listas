@@ -214,12 +214,9 @@ void Search::IDAStar(Puzzle& puzzle){
 
 int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::string>& closed, int &expandedNodes){
     int f = current.g + current.h;
-    
-    
     if(f > bound){
         return f;
     }
-    
     if(current.isGoal())return -current.g;
      
     std::string currentState;

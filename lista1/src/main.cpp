@@ -81,58 +81,5 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // 10 a
-    // 11 b
-    // 12 c
-    // 13 d
-    // 14 e
-    // 15 f
-    /*
-    Puzzle puzzle1 = Puzzle({'0','6','1','7','4','2','3','8','5'});
-    Puzzle puzzle2 = Puzzle({'5','0','2','6','4','8','1','7','3'});
-    Puzzle puzzle3 = Puzzle({'2','4','7','0','3','6','8','1','5'});
-    Puzzle puzzle4 = Puzzle({'7','b','8','3','e','0','6','f','1','4','d','9','5','c','2','a'});
-    Puzzle puzzle5 = Puzzle({'c','9','0','6','8','3','5','e','2','4','b','7','a','1','f','d'});
-    Puzzle puzzle6 = Puzzle({'d','0','9','c','b','6','3','5','f','8','1','a','4','e','2','7'});
-    7 b 8 3 e 0 6 f 1 4 d 9 5 c 2 a
-    
-    std::cout << std::endl << "Astar:" << std::endl;
-    
-    search.AStar(puzzle1);
-    search.AStar(puzzle2);
-    search.AStar(puzzle3);
-
-    std::cout << std::endl << "BFS:" << std::endl;
-    search.BFS(puzzle1);
-    search.BFS(puzzle2);
-    search.BFS(puzzle3);
-
-    std::cout << std::endl << "IDAStar:" << std::endl;
-    
-    search.IDAStar(puzzle1);
-    search.IDAStar(puzzle2);
-    search.IDAStar(puzzle3);
-
-    std::cout << std::endl << "IDFS:" << std::endl;
-    
-    search.IDFS(puzzle1);
-    search.IDFS(puzzle2);
-    search.IDFS(puzzle3);
-
-    std::cout << std::endl << "GBFS:" << std::endl;
-
-    search.GBFS(puzzle1);
-    search.GBFS(puzzle2);
-    search.GBFS(puzzle3);
-  
-    std::cout << std::endl << "Astar 15:" << std::endl;
-
-    search.AStar(puzzle4);
-    search.AStar(puzzle5);
-    search.AStar(puzzle6);
-    */
-    
-
-
     return EXIT_SUCCESS;
 }

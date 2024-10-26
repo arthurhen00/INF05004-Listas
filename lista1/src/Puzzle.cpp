@@ -36,31 +36,41 @@ int Puzzle::findBlank() const {
 }
 
 void Puzzle::moveBlankDown(const int blankIndex) {
-    std::swap(state[blankIndex], state[blankIndex + gridSize]);
+    int tileIndex = blankIndex + gridSize;
+    updateManhattanDistance(tileIndex, blankIndex);
+    std::swap(state[blankIndex], state[tileIndex]);
     lastAction = Action::DOWN;
     g++;
-    h = ManhattanDistance();
+
 }
 
 void Puzzle::moveBlankUp(const int blankIndex) {
-    std::swap(state[blankIndex], state[blankIndex - gridSize]);
+    int tileIndex = blankIndex - gridSize;
+    updateManhattanDistance(tileIndex, blankIndex);
+    std::swap(state[blankIndex], state[tileIndex]);
     lastAction = Action::UP;
     g++;
-    h = ManhattanDistance();
+
 }
 
 void Puzzle::moveBlankRight(const int blankIndex) {
-    std::swap(state[blankIndex], state[blankIndex + 1]);
+    int tileIndex = blankIndex + 1;
+    updateManhattanDistance(tileIndex, blankIndex);
+    std::swap(state[blankIndex], state[tileIndex]);
     lastAction = Action::RIGHT;
     g++;
-    h = ManhattanDistance();
+
 }
 
 void Puzzle::moveBlankLeft(const int blankIndex) {
-    std::swap(state[blankIndex], state[blankIndex - 1]);
+    int tileIndex = blankIndex - 1;
+    updateManhattanDistance(tileIndex, blankIndex);
+    std::swap(state[blankIndex], state[tileIndex]);
     lastAction = Action::LEFT;
     g++;
-    h = ManhattanDistance();
+
+
+
 }
 
 std::vector<Puzzle> Puzzle::getNeighbors() const {
@@ -128,4 +138,28 @@ int Puzzle::ManhattanDistance() {
 
     heuristicAccum+=totalDistance;
     return totalDistance;
+}
+
+void Puzzle::updateManhattanDistance(int tileIndex, int blankIndex){
+    int tileValue = (state[tileIndex] - '0');
+    if (state[tileIndex] >= 'a') {
+        tileValue = state[tileIndex] - 'a' + 10;
+    }
+
+    int currentRow = tileIndex / gridSize;
+    int currentCol = tileIndex % gridSize;
+    int goalRow =  tileValue / gridSize;
+    int goalCol = tileValue % gridSize;
+    int prevDistance = std::abs(currentRow - goalRow) + std::abs(currentCol - goalCol);
+
+    currentRow = blankIndex  / gridSize;
+    currentCol = blankIndex  % gridSize;
+    int curDistance = std::abs(currentRow - goalRow) + std::abs(currentCol - goalCol);
+    int deltaDistance = curDistance - prevDistance;
+    h += deltaDistance;
+
+
+    heuristicAccum += h;
+    heuristicCounter++;
+
 }

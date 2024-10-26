@@ -28,6 +28,8 @@ class Puzzle {
         void printPuzzle();
 
         int ManhattanDistance();
+
+        void updateManhattanDistance(int tileIndex, int blankIndex);
     
     private:
         void moveBlankDown(const int blankIndex);
