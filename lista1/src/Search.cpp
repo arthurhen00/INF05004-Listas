@@ -1,4 +1,4 @@
-#include "src/SearchAlg/Search.hpp"
+#include "src/Search.hpp"
 #include "src/Puzzle.hpp"
 
 #include <string>
@@ -37,7 +37,6 @@ void Search::BFS(Puzzle& puzzle) {
     std::deque<Puzzle> open;
     std::unordered_set<std::string> closed;
 
-
     std::string initialState(puzzle.state.begin(), puzzle.state.end());
     open.push_back(puzzle);
     closed.insert(initialState);
@@ -48,23 +47,21 @@ void Search::BFS(Puzzle& puzzle) {
         Puzzle current = open.front();
         open.pop_front();
         expandedNodes++;
-        
 
         for (const Puzzle& neighbor : current.getNeighbors()) {
             if (neighbor.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-
-                std::cout << expandedNodes << ", ";
-                std::cout << neighbor.g << ", ";
-                std::cout << elapsedTime.count() << ", ";
-                std::cout << 0.0f<< ", ";
-                std::cout << puzzle.ManhattanDistance() << "\n";
-
+                fprintf(stderr, "%d,%d,%lf,%.0lf,%d\n"
+                    , expandedNodes
+                    , neighbor.g
+                    , elapsedTime.count()
+                    , 0.0f
+                    , puzzle.ManhattanDistance()
+                );
                 return;
             }
-
 
             std::string neighborState(neighbor.state.begin(), neighbor.state.end());
             if (closed.find(neighborState) == closed.end()) {
@@ -74,7 +71,7 @@ void Search::BFS(Puzzle& puzzle) {
         }
     }
 
-    printf("Unsolvable\n");
+    fprintf(stderr, "-,-,-,-,-\n");
     return;
 }
 
@@ -108,16 +105,17 @@ void Search::GBFS(Puzzle& puzzle) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-                std::cout << nodesExpanded - 1 << ", ";
-                std::cout << n.state.g << ", ";
-                std::cout << elapsedTime.count() << ", ";
-                std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
-                std::cout << puzzle.ManhattanDistance() << "\n";
+                fprintf(stderr, "%d,%d,%lf,%lf,%d\n"
+                    , nodesExpanded - 1
+                    , n.state.g
+                    , elapsedTime.count()
+                    , static_cast<double>(heuristicAccum) / heuristicCounter
+                    , puzzle.ManhattanDistance()
+                );
                 return;
             }
 
             for (Puzzle& neighbor : n.state.getNeighbors()) {
-
                 std::string neighborState(neighbor.state.begin(), neighbor.state.end());
                 if (closed.find(neighborState) == closed.end()) {
                     insertOrder++;
@@ -127,7 +125,8 @@ void Search::GBFS(Puzzle& puzzle) {
             }
         }
     }
-    printf("Unsolvable\n");
+
+    fprintf(stderr, "-,-,-,-,-\n");
     return;
 }
 
@@ -141,10 +140,7 @@ void Search::AStar(Puzzle& puzzle){
     std::priority_queue<PriorityPuzzle,std::vector<PriorityPuzzle>, AStarPriorityComparator> open;
     std::unordered_set<std::string> closed;
 
-
     open.push(std::move(initialStatePP));
-
-
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -161,13 +157,16 @@ void Search::AStar(Puzzle& puzzle){
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
 
-                std::cout << expandedNodes - 1 << ", ";
-                std::cout << current.state.g << ", ";
-                std::cout << elapsedTime.count() << ", ";
-                std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
-                std::cout << puzzle.ManhattanDistance() << "\n";
+                fprintf(stderr, "%d,%d,%lf,%lf,%d\n"
+                    , expandedNodes - 1
+                    , current.state.g
+                    , elapsedTime.count()
+                    , static_cast<double>(heuristicAccum) / heuristicCounter
+                    , puzzle.ManhattanDistance()
+                );
                 return;
             }
+
             for (const Puzzle& neighbor : current.state.getNeighbors()) {
                 std::string neighborState(neighbor.state.begin(), neighbor.state.end());
                 if (closed.find(neighborState) == closed.end()) {
@@ -178,13 +177,10 @@ void Search::AStar(Puzzle& puzzle){
             }
         }
     }
-    std::cout << expandedNodes ;
-    std::cout << " Unsolvable\n";
     
+    fprintf(stderr, "-,-,-,-,-\n");
     return ;
 }
-
-
 
 void Search::IDAStar(Puzzle& puzzle){
     int expandedNodes = 0;
@@ -200,11 +196,14 @@ void Search::IDAStar(Puzzle& puzzle){
         if(result < 0){
             auto endTime = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsedTime = endTime - startTime;
-            std::cout << expandedNodes<< ", ";
-            std::cout << -result << ", ";
-            std::cout << elapsedTime.count() << ", ";
-            std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
-            std::cout << puzzle.h << "\n";
+
+            fprintf(stderr, "%d,%d,%lf,%lf,%d\n"
+                , expandedNodes
+                , -result
+                , elapsedTime.count()
+                , static_cast<double>(heuristicAccum) / heuristicCounter
+                , puzzle.h
+            );
             return;
         }
         bound = result;
@@ -232,11 +231,9 @@ int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::st
         if(result < min) min = result;
         
     }
-    
 
     return min;
 }
-
 
 void Search::IDFS(Puzzle& puzzle){
     int depth = 1;
@@ -250,11 +247,14 @@ void Search::IDFS(Puzzle& puzzle){
         if(result > 0){
             auto endTime = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsedTime = endTime - startTime;
-            std::cout << expandedNodes<< ", ";
-            std::cout << result << ", ";
-            std::cout << elapsedTime.count() << ", ";
-            std::cout << static_cast<double>(heuristicAccum) / heuristicCounter << ", ";
-            std::cout << puzzle.h << "\n";
+
+            fprintf(stderr, "%d,%d,%lf,%.0lf,%d\n"
+                , expandedNodes
+                , result
+                , elapsedTime.count()
+                , 0.0f
+                , puzzle.h
+            );
             return;
         }
         depth++;

@@ -1,4 +1,4 @@
-#include "src/SearchAlg/Search.hpp"
+#include "src/Search.hpp"
 #include "src/Puzzle.hpp"
 
 #include <iostream>
