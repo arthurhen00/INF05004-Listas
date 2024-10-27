@@ -23,56 +23,74 @@
         :effect (and
 ;; Add your solution here.
             ;; Luz
-            (when (light-on ?room)
-                    (not (light-on ?room))) ;; Apaga a luz, se estiver acesa.
-            (when (not (light-on ?room)) 
-                    (light-on ?room))       ;; Acende a luz, se estiver apagada.
+            (when (light-on ?room) (not (light-on ?room))) ;; Apaga a luz, se estiver acesa.
+            (when (not (light-on ?room)) (light-on ?room)) ;; Acende a luz, se estiver apagada.
 
             ;; Movimentacao vampiro
-            (when (and (vampire-is-in ?room) (light-on ?room)) ;; Vampiro no quarto ligado
-                    (or
-                        ;; Se antihorario desligado, mover
-                        (and
-                            (not (light-on ?anti-clockwise-neighbor))
-                            (vampire-is-in ?anti-clockwise-neighbor)
+            (when (and (vampire-is-in ?room) (not (light-on ?room))) ;; Vampiro no quarto com luz ligada ;; HERE
 
-                            (when (slayer-is-in ?anti-clockwise-neighbor) ;; Se encontrou cacador, lutar
-                                (fighting)
-                            )
-                        )
-                        ;; Se ambas ligadas, mover horario
+                (and 
+                    (not (vampire-is-in ?room)) ;; Remover o vampiro do quarto atual
+                    
+                    ;; Se o anti-horario estiver acesso e o horario apagado, mover para horario
+                    (when (and (light-on ?anti-clockwise-neighbor) (not (light-on ?clockwise-neighbor)))
                         (and
-                            (light-on ?anti-clockwise-neighbor)
-                            (light-on ?clockwise-neighbor)
                             (vampire-is-in ?clockwise-neighbor)
 
-                            (when (slayer-is-in ?clockwise-neighbor) ;; Se encontrou cacador, lutar
+                            (when (slayer-is-in ?anti-clockwise-neighbor)
                                 (fighting)
                             )
                         )
                     )
-            )
 
-            ;; Movimentacao cacador
-            (when (and (slayer-is-in ?room) (not (light-on ?room))) ;; Cacador no quarto desligado 
-                (or
-                    ;; Se horario ligada, mover
-                    (and
-                        (light-on ?clockwise-neighbor)
-                        (slayer-is-in ?clockwise-neighbor)
+                    ;; Se o vizinho anti-horario estiver escuro, mover para la
+                    (when (not (light-on ?anti-clockwise-neighbor))
+                        (and
+                            (vampire-is-in ?anti-clockwise-neighbor)
 
-                        (when (vampire-is-in ?clockwise-neighbor) ;; Se encontrou vampiro, lutar
-                            (fighting)
+                            (when (slayer-is-in ?anti-clockwise-neighbor)
+                                (fighting)
+                            )
                         )
                     )
 
-                    ;; Se horario desligada, mover antihorario
-                    (and
-                        (not (light-on ?clockwise-neighbor))
-                        (slayer-is-in ?anti-clockwise-neighbor)
+                    ;; Se ambos os vizinhos estão acesos, mover para o sentido horario
+                    (when (and (light-on ?anti-clockwise-neighbor) (light-on ?clockwise-neighbor))
+                        (and
+                            (vampire-is-in ?clockwise-neighbor)
 
-                        (when (vampire-is-in ?anti-clockwise-neighbor) ;; Se encontrou vampiro, lutar
-                            (fighting)
+                            (when (slayer-is-in ?clockwise-neighbor)
+                                (fighting)
+                            )
+                        )
+                    )
+                )
+            )
+
+            ;; Movimentacao do caçador
+            (when (and (slayer-is-in ?room) (light-on ?room)) ;; Caçador no quarto com luz apagada ;; HERE
+                
+                (and (not (slayer-is-in ?room)) ;; Remover caçador do quarto atual
+
+                    ;; Se o quarto horário estiver com a luz acesa, mover para lá
+                    (when (light-on ?clockwise-neighbor)
+                        (and
+                            (slayer-is-in ?clockwise-neighbor)
+
+                            (when (vampire-is-in ?clockwise-neighbor)
+                                (fighting)
+                            )
+                        )
+                    )
+
+                    ;; Se o quarto horário estiver com a luz apagada, mover para o anti-horário
+                    (when (not (light-on ?clockwise-neighbor))
+                        (and
+                            (slayer-is-in ?anti-clockwise-neighbor)
+
+                            (when (vampire-is-in ?anti-clockwise-neighbor)
+                                (fighting)
+                            )
                         )
                     )
                 )
