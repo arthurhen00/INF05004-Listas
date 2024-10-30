@@ -117,9 +117,6 @@ int Puzzle::ManhattanDistance() {
     heuristicCounter++;
     for (size_t i = 0; i < state.size(); i++) {
         int value = state[i] - '0';
-        if (state[i] >= 'a') {
-            value = state[i] - 'a' + 10;
-        }
 
         if (value == 0) {
             continue;
@@ -142,10 +139,6 @@ int Puzzle::ManhattanDistance() {
 
 void Puzzle::updateManhattanDistance(int tileIndex, int blankIndex){
     int tileValue = (state[tileIndex] - '0');
-    if (state[tileIndex] >= 'a') {
-        tileValue = state[tileIndex] - 'a' + 10;
-    }
-
     int currentRow = tileIndex / gridSize;
     int currentCol = tileIndex % gridSize;
     int goalRow =  tileValue / gridSize;

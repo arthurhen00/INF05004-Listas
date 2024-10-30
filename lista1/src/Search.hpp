@@ -15,7 +15,7 @@ class Search {
         void IDAStar(Puzzle& puzzle);
         void IDFS(Puzzle& puzzle);
     private:
-        int IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::string>& closed, int &expandedNodes);
+        int IDAStarSearch(Puzzle& current, int bound, int &expandedNodes);
         int IDFSSearch(Puzzle& current, int depth, int& expandedNodes);
 
 };

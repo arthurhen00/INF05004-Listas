@@ -28,12 +28,17 @@ std::vector<Puzzle> getPuzzles(int puzzleType, int argc, char ** argv){
     for (int i = 2; i < argc; i++)
     {
         int value = atoi(argv[i]);
-        if (value > 9){
-            state.push_back(value - 10 + 'a');
-        }else{
-            state.push_back(value + '0');
+      
+         if (value >= 0 && value <= 15) {
+            value = value + '0'; // '0' to '9'
+            state.push_back(value);
+            
+        } else {
+            std::cerr << "Error: Value out of range (0-15): " << value << std::endl;
+            return puzzles;
         }
-        if(i > 2 && (i-1) % puzzleType == 0){
+
+         if(i > 2 && (i-1) % puzzleType == 0){
             puzzles.push_back(Puzzle(state));
             state.clear();
         }

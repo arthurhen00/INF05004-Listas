@@ -10,6 +10,17 @@
 #include <queue>
 #include <limits>
 
+
+unsigned long long state2number(const std::vector<char>& state) {
+    unsigned long long idx = 0;
+    for (unsigned long long  i = 0; i < state.size(); ++i) {
+        unsigned long long val = state[i] - '0';             
+        val = static_cast<int>(val);
+        idx |= val << (i * 4);
+    }
+    return idx;
+}
+
 PriorityPuzzle::PriorityPuzzle(Puzzle state, int insertionOrder)
 : state(state),
 insertionOrder(insertionOrder) {}
@@ -35,11 +46,11 @@ bool AStarPriorityComparator::operator()(const PriorityPuzzle& t, const Priority
 void Search::BFS(Puzzle& puzzle) {
     int expandedNodes = 0;
     std::deque<Puzzle> open;
-    std::unordered_set<std::string> closed;
+    std::unordered_set<unsigned long long> closed;
 
-    std::string initialState(puzzle.state.begin(), puzzle.state.end());
+
     open.push_back(puzzle);
-    closed.insert(initialState);
+    closed.insert(state2number(puzzle.state));
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -63,7 +74,7 @@ void Search::BFS(Puzzle& puzzle) {
                 return;
             }
 
-            std::string neighborState(neighbor.state.begin(), neighbor.state.end());
+            unsigned long long neighborState = state2number(neighbor.state);
             if (closed.find(neighborState) == closed.end()) {
                 closed.insert(neighborState);
                 open.push_back(neighbor);
@@ -85,7 +96,7 @@ void Search::GBFS(Puzzle& puzzle) {
     PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
     std::priority_queue<PriorityPuzzle, std::vector<PriorityPuzzle>, GBFSPriorityComparator> open;
-    std::unordered_set<std::string> closed;
+    std::unordered_set<unsigned long long> closed;
 
     open.push(std::move(initialStatePP));
 
@@ -95,7 +106,7 @@ void Search::GBFS(Puzzle& puzzle) {
         PriorityPuzzle n = open.top();
         open.pop();
 
-        std::string currentState(n.state.state.begin(), n.state.state.end());
+        unsigned long long currentState = state2number(n.state.state);
 
         if (closed.find(currentState) == closed.end()) {
             nodesExpanded++;
@@ -116,7 +127,8 @@ void Search::GBFS(Puzzle& puzzle) {
             }
 
             for (Puzzle& neighbor : n.state.getNeighbors()) {
-                std::string neighborState(neighbor.state.begin(), neighbor.state.end());
+
+                unsigned long long neighborState = state2number(neighbor.state);
                 if (closed.find(neighborState) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
@@ -138,7 +150,7 @@ void Search::AStar(Puzzle& puzzle){
     PriorityPuzzle initialStatePP(puzzle, insertOrder);
 
     std::priority_queue<PriorityPuzzle,std::vector<PriorityPuzzle>, AStarPriorityComparator> open;
-    std::unordered_set<std::string> closed;
+    std::unordered_set<unsigned long long> closed;
 
     open.push(std::move(initialStatePP));
 
@@ -147,8 +159,9 @@ void Search::AStar(Puzzle& puzzle){
     while (!open.empty()) {
         PriorityPuzzle current = open.top();
         open.pop();
+
+        unsigned long long currentState = state2number(current.state.state);
         
-        std::string currentState(current.state.state.begin(), current.state.state.end());
         if (closed.find(currentState) == closed.end()) {
             expandedNodes++;
             
@@ -164,11 +177,13 @@ void Search::AStar(Puzzle& puzzle){
                     , static_cast<double>(heuristicAccum) / heuristicCounter
                     , puzzle.ManhattanDistance()
                 );
+
+                
                 return;
             }
 
             for (const Puzzle& neighbor : current.state.getNeighbors()) {
-                std::string neighborState(neighbor.state.begin(), neighbor.state.end());
+                unsigned long long neighborState = state2number(neighbor.state);
                 if (closed.find(neighborState) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
@@ -186,12 +201,14 @@ void Search::IDAStar(Puzzle& puzzle){
     int expandedNodes = 0;
     int bound = puzzle.h;
     auto startTime = std::chrono::high_resolution_clock::now();
-    std::unordered_set<std::string> closed;
     heuristicAccum = 0;
     heuristicCounter = 0;
     while (true)
-    {
-        int result = IDAStarSearch(puzzle, bound, closed, expandedNodes);
+    {   
+        heuristicAccum += puzzle.h;
+        heuristicCounter += 1;
+        //std::cout << "ida" << std::endl;
+        int result = IDAStarSearch(puzzle, bound, expandedNodes);
         
         if(result < 0){
             auto endTime = std::chrono::high_resolution_clock::now();
@@ -206,41 +223,32 @@ void Search::IDAStar(Puzzle& puzzle){
             );
             return;
         }
+        
         bound = result;
-        closed.clear();
     }
 }
 
-int Search::IDAStarSearch(Puzzle& current, int bound, std::unordered_set<std::string>& closed, int &expandedNodes){
+int Search::IDAStarSearch(Puzzle& current, int bound, int &expandedNodes){
     int f = current.g + current.h;
     if(f > bound){
         return f;
     }
-    if(current.isGoal())return -current.g;
-     
-    std::string currentState;
-    for (int value : current.state) {
-        currentState += (value == 0) ? '0' : '0' + value;
-    }
+    if(current.isGoal()) return -current.g;
 
-    int min = std::numeric_limits<int>::max();
+    int nextLimit = std::numeric_limits<int>::max();
     expandedNodes++; 
     for(Puzzle& neighbor : current.getNeighbors()){
-        int result = IDAStarSearch(neighbor,bound, closed, expandedNodes);
+        int result = IDAStarSearch(neighbor,bound, expandedNodes);
         if(result < 0) return result;
-        if(result < min) min = result;
-        
+        nextLimit = std::min(nextLimit,result);
     }
-
-    return min;
+    return nextLimit;
 }
 
 void Search::IDFS(Puzzle& puzzle){
     int depth = 1;
     int expandedNodes = 0;
     auto startTime = std::chrono::high_resolution_clock::now();
-    heuristicAccum = 0;
-    heuristicCounter = 0;
     while (true)
     {
         int result = IDFSSearch(puzzle,depth - 1,expandedNodes);
