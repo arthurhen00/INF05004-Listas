@@ -35,6 +35,7 @@ bool AStarPriorityComparator::operator()(const PriorityPuzzle& t, const Priority
 }
 
 void Search::BFS(Puzzle& puzzle) {
+    auto startTime = std::chrono::high_resolution_clock::now();
     int expandedNodes = 0;
     std::deque<Puzzle> open;
     std::unordered_set<unsigned long long> closed;
@@ -43,7 +44,6 @@ void Search::BFS(Puzzle& puzzle) {
     open.push_back(puzzle);
     closed.insert(puzzle.state);
 
-    auto startTime = std::chrono::high_resolution_clock::now();
 
     while (!open.empty()) {
         Puzzle current = open.front();
@@ -77,6 +77,7 @@ void Search::BFS(Puzzle& puzzle) {
 }
 
 void Search::GBFS(Puzzle& puzzle) {
+    auto startTime = std::chrono::high_resolution_clock::now();
     int nodesExpanded = 0;
     int insertOrder = 1;
 
@@ -90,7 +91,6 @@ void Search::GBFS(Puzzle& puzzle) {
 
     open.push(std::move(initialStatePP));
 
-    auto startTime = std::chrono::high_resolution_clock::now();
     
     while (!open.empty()) {
         PriorityPuzzle n = open.top();
@@ -130,6 +130,7 @@ void Search::GBFS(Puzzle& puzzle) {
 }
 
 void Search::AStar(Puzzle& puzzle){
+    auto startTime = std::chrono::high_resolution_clock::now();
     int expandedNodes = 0;
     int insertOrder = 1;
     heuristicAccum = 0;
@@ -141,7 +142,6 @@ void Search::AStar(Puzzle& puzzle){
 
     open.push(std::move(initialStatePP));
 
-    auto startTime = std::chrono::high_resolution_clock::now();
 
     while (!open.empty()) {
         PriorityPuzzle current = open.top();
@@ -183,9 +183,9 @@ void Search::AStar(Puzzle& puzzle){
 }
 
 void Search::IDAStar(Puzzle& puzzle){
+    auto startTime = std::chrono::high_resolution_clock::now();
     int expandedNodes = 0;
     int bound = puzzle.h;
-    auto startTime = std::chrono::high_resolution_clock::now();
     heuristicAccum = 0;
     heuristicCounter = 0;
     while (true)
@@ -231,9 +231,9 @@ int Search::IDAStarSearch(Puzzle& current, int bound, int &expandedNodes){
 }
 
 void Search::IDFS(Puzzle& puzzle){
+    auto startTime = std::chrono::high_resolution_clock::now();
     int depth = 1;
     int expandedNodes = 0;
-    auto startTime = std::chrono::high_resolution_clock::now();
     while (true)
     {
         int result = IDFSSearch(puzzle,depth - 1,expandedNodes);
