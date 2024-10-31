@@ -5,6 +5,39 @@
 #include <vector>
 #include <string>
 
+
+#include <bitset>
+#include <type_traits>
+template <typename T>
+void printBinary(T number) {
+    constexpr size_t numBits = sizeof(T) * 8;
+    std::bitset<numBits> binary(number);     
+    std::cout << binary << std::endl << std::endl;
+}
+void print4BitChunks(unsigned long long number) {
+    const int CHUNK_SIZE = 4;  
+    const int TOTAL_BITS = 64;     
+    const unsigned long long MASK = 0xF; 
+
+    for (int i = 0; i < TOTAL_BITS; i += CHUNK_SIZE) {
+        unsigned int chunk = (number >> i) & MASK;
+        std::cout << chunk << " ";
+    }
+    std::cout << std::endl;
+}
+
+
+unsigned long long encodeState(const std::vector<char>& state) {
+    unsigned long long idx = 0;
+    for (unsigned long long  i = 0; i < state.size(); ++i) {
+        unsigned long long val = state[i] - '0';             
+        val = static_cast<int>(val);
+        idx |= val << (i * 4);
+    }
+    return idx;
+}
+
+
 #define EIGHT_PUZZLE 9
 #define FIFTEEN_PUZZLE 16
 int getPuzzleType(int argc, char** argv){
@@ -39,7 +72,7 @@ std::vector<Puzzle> getPuzzles(int puzzleType, int argc, char ** argv){
         }
 
          if(i > 2 && (i-1) % puzzleType == 0){
-            puzzles.push_back(Puzzle(state));
+            puzzles.push_back(Puzzle(encodeState(state),puzzleType));
             state.clear();
         }
     }
@@ -55,6 +88,7 @@ int main(int argc, char** argv) {
      Search search = Search();
      std::vector<Puzzle> puzzles = getPuzzles(puzzleType,argc,argv);
 
+    
      std::string algorithm = argv[1];
      if (algorithm == "-bfs") {
         for (auto& p : puzzles)

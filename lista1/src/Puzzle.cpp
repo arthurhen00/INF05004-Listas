@@ -6,31 +6,27 @@
 #include <iostream>
 #include <cmath>
 
-
 size_t heuristicAccum = 0;
 size_t heuristicCounter = 0;
 
-Puzzle::Puzzle(std::vector<char> state) 
-: state(state), g(0), lastAction(UNSET){
-    if(state.size() == 9){
-        gridSize = 3;
-    }else{
-        gridSize = 4;
-    }
+int gridSize = 0;
+unsigned int puzzleSize = 0;
 
+
+Puzzle::Puzzle(unsigned long long state, int size) 
+: state(state), g(0), lastAction(UNSET){
+    gridSize = sqrt(size);
+    puzzleSize = size;
     h = ManhattanDistance();
 }
 
 
 int Puzzle::findBlank() const {
-    size_t stateSize = state.size();
-    for (size_t i = 0; i < stateSize; i++) {
-        if (state[i] == '0') {
+    for (unsigned int i = 0; i < puzzleSize; ++i) {
+        int tile = (state >> (i * 4)) & 0xF;
+        if (tile == 0) {
             return i;
         }
-    }
-    for (auto s: state){
-        std::cout << s << ", ";
     }
     throw std::runtime_error("Blank space not found in the Puzzle.");
 }
@@ -38,7 +34,12 @@ int Puzzle::findBlank() const {
 void Puzzle::moveBlankDown(const int blankIndex) {
     int tileIndex = blankIndex + gridSize;
     updateManhattanDistance(tileIndex, blankIndex);
-    std::swap(state[blankIndex], state[tileIndex]);
+    unsigned long long blankValue = (state >> (blankIndex * 4)) & 0xF;
+    unsigned long long tileValue = (state >> (tileIndex * 4)) & 0xF;
+    state &= ~(0xFULL << (blankIndex * 4)); 
+    state &= ~(0xFULL << (tileIndex * 4));  
+    state |= blankValue << (tileIndex * 4); 
+    state |= tileValue << (blankIndex * 4); 
     lastAction = Action::DOWN;
     g++;
 
@@ -47,7 +48,12 @@ void Puzzle::moveBlankDown(const int blankIndex) {
 void Puzzle::moveBlankUp(const int blankIndex) {
     int tileIndex = blankIndex - gridSize;
     updateManhattanDistance(tileIndex, blankIndex);
-    std::swap(state[blankIndex], state[tileIndex]);
+    unsigned long long blankValue = (state >> (blankIndex * 4)) & 0xF;
+    unsigned long long tileValue = (state >> (tileIndex * 4)) & 0xF;
+    state &= ~(0xFULL << (blankIndex * 4)); 
+    state &= ~(0xFULL << (tileIndex * 4));  
+    state |= blankValue << (tileIndex * 4); 
+    state |= tileValue << (blankIndex * 4); 
     lastAction = Action::UP;
     g++;
 
@@ -56,7 +62,12 @@ void Puzzle::moveBlankUp(const int blankIndex) {
 void Puzzle::moveBlankRight(const int blankIndex) {
     int tileIndex = blankIndex + 1;
     updateManhattanDistance(tileIndex, blankIndex);
-    std::swap(state[blankIndex], state[tileIndex]);
+    unsigned long long blankValue = (state >> (blankIndex * 4)) & 0xF;
+    unsigned long long tileValue = (state >> (tileIndex * 4)) & 0xF;
+    state &= ~(0xFULL << (blankIndex * 4)); 
+    state &= ~(0xFULL << (tileIndex * 4));  
+    state |= blankValue << (tileIndex * 4); 
+    state |= tileValue << (blankIndex * 4); 
     lastAction = Action::RIGHT;
     g++;
 
@@ -65,17 +76,20 @@ void Puzzle::moveBlankRight(const int blankIndex) {
 void Puzzle::moveBlankLeft(const int blankIndex) {
     int tileIndex = blankIndex - 1;
     updateManhattanDistance(tileIndex, blankIndex);
-    std::swap(state[blankIndex], state[tileIndex]);
+    unsigned long long blankValue = (state >> (blankIndex * 4)) & 0xF;
+    unsigned long long tileValue = (state >> (tileIndex * 4)) & 0xF;
+    state &= ~(0xFULL << (blankIndex * 4)); 
+    state &= ~(0xFULL << (tileIndex * 4));  
+    state |= blankValue << (tileIndex * 4); 
+    state |= tileValue << (blankIndex * 4); 
     lastAction = Action::LEFT;
     g++;
-
-
-
 }
 
 std::vector<Puzzle> Puzzle::getNeighbors() const {
     std::vector<Puzzle> neighbors;
     int blankIndex = findBlank();
+
     if (lastAction != DOWN && blankIndex >= gridSize) {
         Puzzle up(*this);
         up.moveBlankUp(blankIndex);
@@ -103,20 +117,12 @@ bool Puzzle::isGoal() const {
     return h == 0;
 }
 
-void Puzzle::printPuzzle() {
-    for (int i = 0; i < 9; i++) {
-        printf("%d ", state[i]);
-        if ((i + 1) % 3 == 0) {
-            printf("\n");
-        }
-    }
-}
 
 int Puzzle::ManhattanDistance() {
     int totalDistance = 0;
     heuristicCounter++;
-    for (size_t i = 0; i < state.size(); i++) {
-        int value = state[i] - '0';
+    for (size_t i = 0; i < puzzleSize; i++) {
+        int value = (state >> (i * 4)) & 0xF;
 
         if (value == 0) {
             continue;
@@ -138,7 +144,7 @@ int Puzzle::ManhattanDistance() {
 }
 
 void Puzzle::updateManhattanDistance(int tileIndex, int blankIndex){
-    int tileValue = (state[tileIndex] - '0');
+    int tileValue = (state >> (tileIndex * 4)) & 0xF;
     int currentRow = tileIndex / gridSize;
     int currentCol = tileIndex % gridSize;
     int goalRow =  tileValue / gridSize;

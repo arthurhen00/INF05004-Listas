@@ -11,15 +11,6 @@
 #include <limits>
 
 
-unsigned long long state2number(const std::vector<char>& state) {
-    unsigned long long idx = 0;
-    for (unsigned long long  i = 0; i < state.size(); ++i) {
-        unsigned long long val = state[i] - '0';             
-        val = static_cast<int>(val);
-        idx |= val << (i * 4);
-    }
-    return idx;
-}
 
 PriorityPuzzle::PriorityPuzzle(Puzzle state, int insertionOrder)
 : state(state),
@@ -50,7 +41,7 @@ void Search::BFS(Puzzle& puzzle) {
 
 
     open.push_back(puzzle);
-    closed.insert(state2number(puzzle.state));
+    closed.insert(puzzle.state);
 
     auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -74,9 +65,8 @@ void Search::BFS(Puzzle& puzzle) {
                 return;
             }
 
-            unsigned long long neighborState = state2number(neighbor.state);
-            if (closed.find(neighborState) == closed.end()) {
-                closed.insert(neighborState);
+            if (closed.find(neighbor.state) == closed.end()) {
+                closed.insert(neighbor.state);
                 open.push_back(neighbor);
             }
         }
@@ -106,11 +96,9 @@ void Search::GBFS(Puzzle& puzzle) {
         PriorityPuzzle n = open.top();
         open.pop();
 
-        unsigned long long currentState = state2number(n.state.state);
-
-        if (closed.find(currentState) == closed.end()) {
+        if (closed.find(n.state.state) == closed.end()) {
             nodesExpanded++;
-            closed.insert(currentState);
+            closed.insert(n.state.state);
             
             if (n.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
@@ -128,8 +116,7 @@ void Search::GBFS(Puzzle& puzzle) {
 
             for (Puzzle& neighbor : n.state.getNeighbors()) {
 
-                unsigned long long neighborState = state2number(neighbor.state);
-                if (closed.find(neighborState) == closed.end()) {
+                if (closed.find(neighbor.state) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
                     open.push(std::move(pp));
@@ -160,12 +147,11 @@ void Search::AStar(Puzzle& puzzle){
         PriorityPuzzle current = open.top();
         open.pop();
 
-        unsigned long long currentState = state2number(current.state.state);
         
-        if (closed.find(currentState) == closed.end()) {
+        if (closed.find(current.state.state) == closed.end()) {
             expandedNodes++;
             
-            closed.insert(currentState);
+            closed.insert(current.state.state);
             if (current.state.isGoal()) {
                 auto endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsedTime = endTime - startTime;
@@ -183,8 +169,7 @@ void Search::AStar(Puzzle& puzzle){
             }
 
             for (const Puzzle& neighbor : current.state.getNeighbors()) {
-                unsigned long long neighborState = state2number(neighbor.state);
-                if (closed.find(neighborState) == closed.end()) {
+                if (closed.find(neighbor.state) == closed.end()) {
                     insertOrder++;
                     PriorityPuzzle pp(neighbor, insertOrder);
                     open.push(std::move(pp));

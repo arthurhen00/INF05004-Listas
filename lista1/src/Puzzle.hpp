@@ -14,21 +14,17 @@ enum Action {
 };
 class Puzzle {
     public:
-        std::vector<char> state;
-        int gridSize;
+        unsigned long long state;
         int g;
         int h;
         int lastAction;
 
-        Puzzle(std::vector<char> startState);
+        Puzzle(unsigned long long state, int size);
 
         std::vector<Puzzle> getNeighbors() const;
         bool isGoal() const;
 
-        void printPuzzle();
-
         int ManhattanDistance();
-
         void updateManhattanDistance(int tileIndex, int blankIndex);
     
     private:
