@@ -60,6 +60,7 @@ void AndOrGraph::most_conservative_valuation() {
     */
 
     deque<NodeID> queue;
+    unordered_set<NodeID> expanded;
 
     for (AndOrGraphNode &node : nodes) {
         node.forced_true = false;
@@ -68,6 +69,27 @@ void AndOrGraph::most_conservative_valuation() {
             queue.push_back(node.id);
         }
     }
+
+    while (!queue.empty())
+    {
+        int node_id = queue.front();
+        queue.pop_front();
+        AndOrGraphNode &node = nodes[node_id];
+        node.forced_true = true;
+        for(int predecessor_id : node.predecessor_ids){
+            AndOrGraphNode &predecessor = nodes[predecessor_id];
+            predecessor.num_forced_successors++;
+            
+            if(predecessor.type == NodeType::OR ||
+            (predecessor.type == NodeType::AND && predecessor.num_forced_successors == predecessor.successor_ids.size())){
+                if(expanded.find(predecessor_id) == expanded.end()){
+                    queue.push_back(predecessor_id);
+                    expanded.emplace(predecessor_id);
+                }
+            }
+        }
+    }
+    
 
     /*
       TODO: add your code for exercise 2 (a) here. Ignore the members
