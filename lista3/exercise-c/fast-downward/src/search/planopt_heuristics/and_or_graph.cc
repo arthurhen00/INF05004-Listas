@@ -124,6 +124,48 @@ void AndOrGraph::weighted_most_conservative_valuation() {
     /*
       TODO: add your code for exercise 2 (c) here.
     */
+
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> queue;
+
+    //unordered_set<NodeID> expanded;
+
+    for (AndOrGraphNode &node : nodes) {
+        node.forced_true = false;
+        node.num_forced_successors = 0;
+        node.additive_cost = std::numeric_limits<int>::max();
+        if (node.type == NodeType::AND && node.successor_ids.empty()) {
+            node.additive_cost = 0;
+            queue.push({0, node.id});
+        }
+    }
+
+    while (!queue.empty())
+    {
+        int node_id = queue.top().second;
+        queue.pop();
+        AndOrGraphNode &node = nodes[node_id];
+        node.forced_true = true;
+        for(int predecessor_id : node.predecessor_ids){
+            AndOrGraphNode &predecessor = nodes[predecessor_id];
+            predecessor.num_forced_successors++;
+
+            if(predecessor.type == NodeType::OR && predecessor.additive_cost > node.additive_cost + predecessor.direct_cost){
+                predecessor.additive_cost = node.additive_cost + predecessor.direct_cost;
+                queue.push({ predecessor.additive_cost, predecessor_id });
+            }
+            
+            if(predecessor.type == NodeType::AND && predecessor.num_forced_successors == predecessor.successor_ids.size()){
+                predecessor.additive_cost = predecessor.direct_cost;
+                for(int id : predecessor.successor_ids){
+                    predecessor.additive_cost += nodes[id].additive_cost;
+                }
+    
+                queue.push({ predecessor.additive_cost, predecessor_id });
+                //expanded.emplace(predecessor_id);
+                
+            }
+        }
+    }
 }
 
 void add_nodes(vector<string> names, NodeType type, AndOrGraph &g, unordered_map<string, NodeID> &ids) {
