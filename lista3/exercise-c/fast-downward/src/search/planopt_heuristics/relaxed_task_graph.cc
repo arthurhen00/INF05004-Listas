@@ -19,7 +19,7 @@ RelaxedTaskGraph::RelaxedTaskGraph(const TaskProxy &task_proxy)
     */
     for (size_t i = 0; i < variable_node_ids.size(); i++)
     {
-            variable_node_ids[i] = graph.add_node(NodeType::OR);
+        variable_node_ids[i] = graph.add_node(NodeType::OR);
     }
 
     initial_node_id = graph.add_node(NodeType::AND);
@@ -32,23 +32,19 @@ RelaxedTaskGraph::RelaxedTaskGraph(const TaskProxy &task_proxy)
         for(int precondition_id : op.preconditions){
             graph.add_edge(op_id,variable_node_ids[precondition_id]);
         }
+
+        NodeID effect_node = graph.add_node(NodeType::AND, op.cost);
         for(int effect_id : op.effects){
-            graph.add_edge(variable_node_ids[effect_id], op_id);
+            graph.add_edge(variable_node_ids[effect_id], effect_node);
         }
 
-        AndOrGraphNode op_node = graph.get_node(op_id);
-        op_node.direct_cost = op.cost; 
-        
+        graph.add_edge(effect_node, op_id);
     }
     
     goal_node_id = graph.add_node(NodeType::AND);
     for(int id : relaxed_task.goal){
         graph.add_edge(goal_node_id, variable_node_ids[id]);
     }
-
-
-
-
 }
 
 void RelaxedTaskGraph::change_initial_state(const GlobalState &global_state) {
@@ -79,6 +75,7 @@ int RelaxedTaskGraph::additive_cost_of_goal() {
     // to return the h^add value of the goal node.
 
     // TODO: add your code for exercise 2 (c) here.
+    graph.weighted_most_conservative_valuation();
     const AndOrGraphNode &goal_node = graph.get_node(goal_node_id);
     return goal_node.additive_cost;
 }

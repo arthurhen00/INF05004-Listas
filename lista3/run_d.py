@@ -30,7 +30,7 @@ def main():
                 os.path.join(instances_directory, domain_filename),
                 os.path.join(instances_directory, instance_filename),
                 "--search",
-                f"astar({heuristic})"
+                f"eager_greedy([{heuristic}])"
             ]
                 
             try:
