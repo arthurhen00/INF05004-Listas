@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -82,7 +83,37 @@ int RelaxedTaskGraph::additive_cost_of_goal() {
 
 int RelaxedTaskGraph::ff_cost_of_goal() {
     // TODO: add your code for exercise 2 (e) here.
-    return -1;
+    graph.weighted_most_conservative_valuation();
+
+    deque<NodeID> queue;
+    queue.push_back(goal_node_id);
+
+    std::unordered_set<NodeID> visited;
+
+    int total_cost = 0;
+
+    while(!queue.empty()) {
+        int node_id = queue.front();
+        queue.pop_front();
+
+        if(visited.find(node_id) != visited.end()) { continue; }
+
+        visited.insert(node_id);
+
+        const AndOrGraphNode &node = graph.get_node(node_id);
+        total_cost += node.direct_cost;
+
+        if(node.type == NodeType::OR) {
+            queue.push_back(node.achiever);
+        } else if (node.type == NodeType::AND) {
+            for (int successor_id : node.successor_ids) {
+                queue.push_back(successor_id);
+            }
+        }
+
+    }
+
+    return total_cost;
 }
 
 }
