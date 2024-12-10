@@ -40,6 +40,8 @@ Projection::Projection(const TNFTask &task, const Pattern &pattern)
     */
 
     // TODO: add your code for exercise (a) here.
+    projected_task.initial_state = project_state(task.initial_state);
+    projected_task.goal_state = project_state(task.goal_state);
 
     /*
       Project operators and create the projected operators in
@@ -48,6 +50,31 @@ Projection::Projection(const TNFTask &task, const Pattern &pattern)
     */
 
     // TODO: add your code for exercise (a) here.
+    for (const TNFOperator &op : task.operators) {
+        // op ->
+        // cost, entries, name
+        //    -> projected_task.operators
+        TNFOperator project_operator;
+        project_operator.cost = op.cost;
+        project_operator.name = op.name;
+
+        // -1 -> nao mapeada
+        for (TNFOperatorEntry entry : op.entries) {
+            if (variable_mapping[entry.variable_id] == -1) {
+                continue;
+            }
+
+            TNFOperatorEntry project_entry;
+            project_entry.variable_id = variable_mapping[entry.variable_id];
+            project_entry.precondition_value = entry.precondition_value;
+            project_entry.effect_value = entry.effect_value;
+            project_operator.entries.push_back(project_entry);
+        }
+
+        if (!project_operator.entries.empty()) {
+            projected_task.operators.push_back(project_operator);
+        }
+    }
 }
 
 TNFState Projection::project_state(const TNFState &original_state) const {
