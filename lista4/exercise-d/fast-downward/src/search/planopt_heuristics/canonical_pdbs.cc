@@ -30,6 +30,20 @@ vector<vector<int>> build_compatibility_graph(const vector<Pattern> &patterns, c
     vector<vector<int>> graph(patterns.size());
 
     // TODO: add your code for exercise (d) here.
+    for(int i = 0; i < patterns.size(); i++){
+        for(int j = i + 1; j < patterns.size(); j++){
+            planopt_heuristics::TNFState pattern1 = patterns[i];
+            planopt_heuristics::TNFState pattern2 = patterns[j];
+            for(const auto op : task.operators){
+                for(const auto entry : op.entries){
+                    if(!(std::find(pattern1.begin(), pattern1.end(), entry.variable_id)!=pattern1.end()) ||
+                        !(std::find(pattern2.begin(), pattern2.end(), entry.variable_id)!=pattern2.end())){
+                            graph[i].push_back(j);
+                        }
+                }
+            }
+        }
+    }
 
     return graph;
 }
@@ -73,6 +87,13 @@ int CanonicalPatternDatabases::compute_heuristic(const TNFState &original_state)
        int h = 0;
 
        // TODO: add your code for exercise (d) here.
+       for(const auto& set : maximal_additive_sets){
+            int sum = 0;
+            for(const auto& pdb : set){
+                sum += heuristic_values[pdb];
+            }
+            h=max(h,sum);
+       }
 
        return h;
 }
