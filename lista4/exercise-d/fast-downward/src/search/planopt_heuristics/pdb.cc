@@ -47,36 +47,34 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     // TODO: add your code for exercise (b) here.
     while (!queue.empty())
     {
-      
-      for(auto v : distances){
-        if(v != std::numeric_limits<int>::max()){
-          cout << v << ", ";
-        }else{
-          cout << "inf, ";
-        }
-      }
-      cout << endl;
-      cout << endl;
-      
-
-      int current_cost = queue.top().first;
+      int distance = queue.top().first;
       int state_index = queue.top().second;
-      planopt_heuristics::TNFState unranked_state = projection.unrank_state(state_index);
       queue.pop();
 
-      if(unranked_state == projected_task.initial_state){
-        cout << "-------------------------------------------- Achou o inicio --------------------------------------------" << endl;
-        break;
+      if (distances[state_index] != numeric_limits<int>::max()) {
+        continue;
       }
-    
-      for (const auto& op :  projected_task.operators)
-      {
-        for(const auto& entry : op.entries){
-          if(unranked_state[entry.variable_id] == entry.effect_value && distances[state_index] > current_cost + op.cost){
-            distances[state_index] = current_cost + op.cost;
-            planopt_heuristics::TNFState new_state = unranked_state;
-            new_state[entry.variable_id] = entry.precondition_value;
-            queue.push({distances[state_index],projection.rank_state(new_state)});
+
+      distances[state_index] = distance;
+      planopt_heuristics::TNFState unranked_state = projection.unrank_state(state_index);
+
+      for (const auto& op :  projected_task.operators) {
+        bool foo = true;
+        TNFState pred = unranked_state;
+
+        for(const auto& entry : op.entries) {
+          if(unranked_state[entry.variable_id] != entry.effect_value) {
+            foo = false;
+            break;
+          }
+          
+          pred[entry.variable_id] = entry.precondition_value;
+        }
+
+        if (foo) {
+          int pred_index = projection.rank_state(pred);
+          if (distances[pred_index] == numeric_limits<int>::max()) {
+            queue.push({distance + 1, pred_index});
           }
         }
       }
